@@ -27,34 +27,67 @@ import re
 import sys, os
 import random
 
-import TermTk as ttk
+from . import TloggCfg
+from TermTk import *
 
-def filtersFormLayout():
+def filtersFormLayout(win):
     '''
     This form is inspired by glogg "Filters..." form
     '''
 
-    leftRightLayout = ttk.TTkHBoxLayout()
-    leftLayout = ttk.TTkGridLayout()
-    rightLayout = ttk.TTkGridLayout()
+    leftRightLayout = TTkHBoxLayout()
+    leftLayout        = TTkGridLayout()
+    rightLayout       = TTkGridLayout()
+    bottomRightLayout = TTkGridLayout()
     leftRightLayout.addItem(leftLayout)
     leftRightLayout.addItem(rightLayout)
 
-    frameFilters = ttk.TTkFrame(border=True, layout=ttk.TTkGridLayout())
+    frameFilters = TTkFrame(border=True, layout=TTkGridLayout())
     leftLayout.addWidget(frameFilters,0,0,1,5)
 
-    listFilters = ttk.TTkList(parent=frameFilters)
+    listFilters = TTkList(parent=frameFilters)
 
-    addButton    = ttk.TTkButton(text="+",maxWidth=3)
-    removeButton = ttk.TTkButton(text="-",maxWidth=3)
-    upButton     = ttk.TTkButton(text="▲",maxWidth=3)
-    downButton   = ttk.TTkButton(text="▼",maxWidth=3)
+    addButton    = TTkButton(text="+",maxWidth=3)
+    removeButton = TTkButton(text="-",maxWidth=3)
+    upButton     = TTkButton(text="▲",maxWidth=3)
+    downButton   = TTkButton(text="▼",maxWidth=3)
 
     leftLayout.addWidget(addButton       ,1,0)
     leftLayout.addWidget(removeButton    ,1,1)
-    leftLayout.addWidget(ttk.TTkSpacer() ,1,2)
+    leftLayout.addWidget(TTkSpacer() ,1,2)
     leftLayout.addWidget(upButton        ,1,3)
     leftLayout.addWidget(downButton      ,1,4)
+
+    rightLayout.addWidget(TTkLabel(text="Pattern:"),0,0)
+    rightLayout.addWidget(pattern:=TTkLineEdit(text='Test|Test'),0,1)
+    rightLayout.addWidget(TTkLabel(text="Ignore Case:"),1,0)
+    rightLayout.addWidget(ignoreCase:=TTkCheckbox(),1,1)
+    rightLayout.addWidget(TTkLabel(text="FG Color:"),2,0)
+    rightLayout.addWidget(fgColor := TTkColorButtonPicker(border=False, color=TTkColor.fg('#ff0000') ),2,1)
+    rightLayout.addWidget(TTkLabel(text="BG Color:"),3,0)
+    rightLayout.addWidget(bgColor := TTkColorButtonPicker(border=False, color=TTkColor.bg('#ffff00') ),3,1)
+    rightLayout.addWidget(TTkSpacer() ,4,0,1,2)
+
+    rightLayout.addItem(bottomRightLayout ,5,0,1,2)
+    bottomRightLayout.addWidget(ApplyButton := TTkButton(text="Apply",  border=True, maxHeight=3),0,1)
+    bottomRightLayout.addWidget(TTkButton(text="Cancel", border=True, maxHeight=3),0,2)
+    bottomRightLayout.addWidget(TTkButton(text="OK",     border=True, maxHeight=3),0,3)
+
+    ApplyButton.clicked.connect(win.close)
+
+    @ttk.pyTTkSlot(TTkWidget)
+    def _listCallback(item):
+        if filter:=item.data:
+            pattern.setText(filter['pattern'])
+            ignoreCase.setCheckState(TTkK.Checked if filter['ignorecase'] else TTkK.Unchecked)
+            fgColor.setColor(TTkColor.bg(filter['fg']))
+            bgColor.setColor(TTkColor.bg(filter['bg']))
+
+    listFilters.itemClicked.connect(_listCallback)
+
+    for filter in TloggCfg.filters:
+        # ali = TTkAbstractListItem(text=filter['pattern'],data=filter)
+        listFilters.addItem(item=filter['pattern'],data=filter)
 
     listFilters.addItem(f"Pythone|python")
     listFilters.addItem(f"Pythone|python1")
@@ -74,10 +107,10 @@ def filtersFormLayout():
     return leftRightLayout
 
 def preferencesForm(root=None):
-    preferencesLayout = ttk.TTkGridLayout(columnMinWidth=1)
-    frame = ttk.TTkFrame(parent=root, layout=preferencesLayout, border=0)
+    preferencesLayout = TTkGridLayout(columnMinWidth=1)
+    frame = TTkFrame(parent=root, layout=preferencesLayout, border=0)
 
-    frameFilters = ttk.TTkFrame(border=True, title="Filters...", layout=filtersFormLayout())
+    frameFilters = TTkFrame(border=True, title="Filters...", layout=filtersFormLayout())
     preferencesLayout.addWidget(frameFilters,0,0)
 
     return frame

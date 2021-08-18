@@ -54,9 +54,26 @@ def main():
     root = TTk(layout=TTkGridLayout())
     splitter = TTkSplitter(parent=root, orientation=TTkK.VERTICAL)
     tab = TTkTabWidget(parent=splitter, border=False)
+    # tab = TTkTabWidget(parent=splitter, border=True)
     splitter.addWidget(TTkLogViewer(),3)
 
-    tab.addTab(preferencesForm(), "-Setup-")
+
+    fileMenu = tab.addMenu("&File")
+    buttonOpen    = fileMenu.addMenu("Open")
+    buttonClose   = fileMenu.addMenu("Close")
+    fileMenu.addSpacer()
+    buttonFilters = fileMenu.addMenu("Filters...")
+    fileMenu.addSpacer()
+    buttonExit    = fileMenu.addMenu("Exit")
+    buttonExit.menuButtonClicked.connect(lambda _: root.quit())
+
+    def showFilters(btn):
+        win = TTkWindow(title="Filters...", size=(70,20), border=True)
+        win.setLayout(filtersFormLayout(win))
+        TTkHelper.overlay(buttonFilters, win, 0,0)
+    buttonFilters.menuButtonClicked.connect(showFilters)
+
+    # tab.addTab(preferencesForm(), "-Setup-")
 
     for file in args.filename:
         tabSplitter = TTkSplitter(orientation=TTkK.VERTICAL)

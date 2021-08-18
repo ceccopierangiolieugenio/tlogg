@@ -25,3 +25,8 @@
 class TloggCfg:
     version="__VERSION__"
     name="__NAME__"
+    filters=[
+        {'pattern':"ea labore",  'ignorecase':False, 'fg':"#FF0000", 'bg':"#00FFFF" },
+        {'pattern':"sit minim",  'ignorecase':True,  'fg':"#00FF00", 'bg':"#FF00ff" },
+        {'pattern':"sit labore", 'ignorecase':False, 'fg':"#0000FF", 'bg':"#FFFF00" },
+    ]
