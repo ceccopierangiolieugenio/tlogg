@@ -69,11 +69,12 @@ def filtersFormLayout(win):
     rightLayout.addWidget(TTkSpacer() ,4,0,1,2)
 
     rightLayout.addItem(bottomRightLayout ,5,0,1,2)
-    bottomRightLayout.addWidget(ApplyButton := TTkButton(text="Apply",  border=True, maxHeight=3),0,1)
-    bottomRightLayout.addWidget(TTkButton(text="Cancel", border=True, maxHeight=3),0,2)
-    bottomRightLayout.addWidget(TTkButton(text="OK",     border=True, maxHeight=3),0,3)
+    bottomRightLayout.addWidget(applyBtn  := TTkButton(text="Apply",  border=True, maxHeight=3),0,1)
+    bottomRightLayout.addWidget(cancelBtn := TTkButton(text="Cancel", border=True, maxHeight=3),0,2)
+    bottomRightLayout.addWidget(okBtn     := TTkButton(text="OK",     border=True, maxHeight=3),0,3)
 
-    ApplyButton.clicked.connect(win.close)
+    okBtn.clicked.connect(win.close)
+    cancelBtn.clicked.connect(win.close)
 
     @ttk.pyTTkSlot(TTkWidget)
     def _listCallback(item):
@@ -85,24 +86,9 @@ def filtersFormLayout(win):
 
     listFilters.itemClicked.connect(_listCallback)
 
-    for filter in TloggCfg.filters:
+    for i,filter in enumerate(TloggCfg.filters):
         # ali = TTkAbstractListItem(text=filter['pattern'],data=filter)
         listFilters.addItem(item=filter['pattern'],data=filter)
-
-    listFilters.addItem(f"Pythone|python")
-    listFilters.addItem(f"Pythone|python1")
-    listFilters.addItem(f"Pythone|python2")
-    listFilters.addItem(f"Pythone|python3")
-    listFilters.addItem(f"Pythone|python4")
-    listFilters.addItem(f"Pythone|python4")
-    listFilters.addItem(f"Pythone|python4")
-    listFilters.addItem(f"Pythone|python4")
-    listFilters.addItem(f"Pythone|python4")
-    listFilters.addItem(f"Pythone|python4")
-    listFilters.addItem(f"Pythone|python4")
-    listFilters.addItem(f"Pythone|python4")
-    listFilters.addItem(f"Pythone|python4")
-    listFilters.addItem(f"Pythone|python4")
 
     return leftRightLayout
 
