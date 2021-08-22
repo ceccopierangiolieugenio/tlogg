@@ -153,14 +153,14 @@ class FileViewerSearch(FileViewer):
 
     def markIndexes(self, indexes):
         self._indexesMark = indexes
-        self._indexes = [i for i in set(sorted(self._indexesSearched+self._indexesMark))]
+        self._indexes = [i for i in sorted(set(self._indexesSearched+self._indexesMark))]
         ox,oy = self.getViewOffsets()
         self.viewMoveTo(ox,oy)
         self.update()
 
     def searchedIndexes(self, indexes):
         self._indexesSearched = indexes
-        self._indexes = [i for i in set(sorted(self._indexesSearched+self._indexesMark))]
+        self._indexes = [i for i in sorted(set(self._indexesSearched+self._indexesMark))]
         ox,_ = self.getViewOffsets()
         self.viewMoveTo(ox, 0)
         self.update()

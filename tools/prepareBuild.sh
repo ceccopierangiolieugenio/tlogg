@@ -72,7 +72,7 @@ rm -rf ${_TMP_PATH}/*
 
 cp setup.py README.* ${_TMP_PATH}
 cp -a ${_BASE_PATH}/tlogg ${_TMP_PATH}
-rm ${_TMP_PATH}/tlogg/TermTk
+# rm ${_TMP_PATH}/tlogg/TermTk
 rm -rf ${_TMP_PATH}/tlogg/__pycache__
 
 sed "s,__VERSION__,${_VERSION}," -i ${_TMP_PATH}/tlogg/app/cfg.py

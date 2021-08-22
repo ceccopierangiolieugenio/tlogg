@@ -31,7 +31,7 @@ setup(
     include_package_data=False,
     packages=['tlogg','tlogg.app'],
     python_requires=">=3.8",
-    install_requires=['pyTermTk'],
+    install_requires=['pyTermTk','appdirs'],
     entry_points={
         'console_scripts': [
             'tlogg = tlogg:main',

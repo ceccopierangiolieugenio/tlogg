@@ -84,14 +84,14 @@ def main():
 
         # Define the bottom layout widgets
         bottomLayoutSearch = TTkHBoxLayout()
-        bls_label_1 = TTkLabel(text="Text:", maxWidth=6)
-        bls_textbox = TTkLineEdit()
-        bls_label_2 = TTkLabel(text="re:", maxWidth=3)
-        bls_cb_re   = TTkCheckbox(maxWidth=3)
-        bls_search  = TTkButton(text="Search", maxWidth=10)
+        bls_label_1  = TTkLabel(text=" Text:", maxWidth=6)
+        bls_textbox  = TTkLineEdit()
+        bls_label_2  = TTkLabel(text="Ignore case:", maxWidth=12)
+        bls_cb_icase = TTkCheckbox(maxWidth=3)
+        bls_search   = TTkButton(text="Search", maxWidth=10)
 
         bottomLayoutSearch.addWidget(bls_label_2)
-        bottomLayoutSearch.addWidget(bls_cb_re)
+        bottomLayoutSearch.addWidget(bls_cb_icase)
         bottomLayoutSearch.addWidget(bls_label_1)
         bottomLayoutSearch.addWidget(bls_textbox)
         bottomLayoutSearch.addWidget(bls_search)
@@ -125,13 +125,10 @@ def main():
                 self.bvp=bvp
             def search(self):
                 searchtext = self.tb.text()
-                if self.cb.checkState() == TTkK.Checked:
-                    indexes = self.fb.searchRe(searchtext)
-                else:
-                    indexes = self.fb.search(searchtext)
+                indexes = self.fb.searchRe(searchtext, ignoreCase=self.cb.checkState() == TTkK.Checked)
                 self.bvp.searchedIndexes(indexes)
                 self.tvp.searchedIndexes(indexes)
-        _s = _search(bls_textbox,fileBuffer,bls_cb_re,topViewport,bottomViewport)
+        _s = _search(bls_textbox,fileBuffer,bls_cb_icase,topViewport,bottomViewport)
         bls_search.clicked.connect(_s.search)
         bls_textbox.returnPressed.connect(_s.search)
 
