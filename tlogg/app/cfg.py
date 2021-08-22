@@ -26,12 +26,16 @@ class TloggCfg:
     version="__VERSION__"
     name="__NAME__"
     filters=[
-        {'pattern':"ea labore",   'ignorecase':False, 'fg':"#FF0000", 'bg':"#00FFFF" },
-        {'pattern':"sit minim",   'ignorecase':True,  'fg':"#00FF00", 'bg':"#FF00ff" },
-        {'pattern':"sit labore",  'ignorecase':False, 'fg':"#0000FF", 'bg':"#FFFF00" },
-        {'pattern':"sit labore1", 'ignorecase':False, 'fg':"#000000", 'bg':"#FFFF00" },
-        {'pattern':"sit labore2", 'ignorecase':False, 'fg':"#000044", 'bg':"#FFFF00" },
-        {'pattern':"sit labore3", 'ignorecase':False, 'fg':"#000088", 'bg':"#FFFF00" },
-        {'pattern':"sit labore4", 'ignorecase':False, 'fg':"#0000AA", 'bg':"#FFFF00" },
-        {'pattern':"sit labore5", 'ignorecase':False, 'fg':"#0000FF", 'bg':"#FFFF00" },
+        #{'pattern':"Fill",    'ignorecase':False, 'fg':"#00FFFF", 'bg':"#444400" },
+        {'pattern':"tempor",  'ignorecase':False, 'fg':"#FFFF00", 'bg':"#004444" },
+        {'pattern':"ullamco", 'ignorecase':True,  'fg':"#00FF00", 'bg':"#440044" },
+        {'pattern':"amet",    'ignorecase':False, 'fg':"#0088FF", 'bg':"#444400" },
+        #{'pattern':"minim",   'ignorecase':False, 'fg':"#888800", 'bg':"#222222" },
+        #{'pattern':"veniam",  'ignorecase':False, 'fg':"#aaaa00", 'bg':"#004444" },
+        #{'pattern':"ipsum",   'ignorecase':False, 'fg':"#00ffff", 'bg':"#440000" },
+        #{'pattern':"labore",  'ignorecase':False, 'fg':"#0000AA", 'bg':"#FFFF00" },
+        {'pattern':"\.venv",  'ignorecase':False, 'fg':"#00FFFF", 'bg':"#444400" },
+        {'pattern':"python",  'ignorecase':False, 'fg':"#FFFF00", 'bg':"#004444" },
+        {'pattern':"deploy",  'ignorecase':False, 'fg':"#FF00FF", 'bg':"#440044" },
     ]
+

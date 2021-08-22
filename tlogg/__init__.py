@@ -58,11 +58,11 @@ def main():
     splitter.addWidget(TTkLogViewer(),3)
 
 
-    fileMenu = tab.addMenu("&File")
+    fileMenu = tab.addMenu("[&File]")
     buttonOpen    = fileMenu.addMenu("Open")
     buttonClose   = fileMenu.addMenu("Close")
     fileMenu.addSpacer()
-    buttonFilters = fileMenu.addMenu("Filters...")
+    buttonFilters = fileMenu.addMenu("&Filters...")
     fileMenu.addSpacer()
     buttonExit    = fileMenu.addMenu("Exit")
     buttonExit.menuButtonClicked.connect(lambda _: root.quit())
@@ -110,6 +110,11 @@ def main():
         bottomViewport.selected.connect(topViewport.selectAndMove)
         bottomViewport.marked.connect(topViewport.markIndexes)
         topViewport.marked.connect(bottomViewport.markIndexes)
+
+        # Add those viewpoers to the global list to allow dynamic refresh
+        # TODO: Try to get rid of this
+        TloggGlbl.addRefView(topViewport)
+        TloggGlbl.addRefView(bottomViewport)
 
         class _search:
             def __init__(self,tb,fb,cb,tvp,bvp):

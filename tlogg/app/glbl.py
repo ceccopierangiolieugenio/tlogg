@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 
 # MIT License
@@ -23,7 +22,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .cfg import *
-from .glbl import *
-from .fileviewer import *
-from .preferences import *
+class TloggGlbl:
+    _refViews = []
+    @staticmethod
+    def addRefView(view):
+        TloggGlbl._refViews.append(view)
+
+    @staticmethod
+    def refreshViews():
+        for view in TloggGlbl._refViews:
+            view.update()
