@@ -27,7 +27,7 @@ deployTest: .venv
 
 deploy: .venv
 	. .venv/bin/activate ; \
-	python3 -m twine upload tmp/dist/*
+	python3 -m twine upload --repository tlogg  tmp/dist/* --verbose
 
 #test: .venv
 #	. .venv/bin/activate ; \

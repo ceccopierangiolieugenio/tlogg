@@ -85,7 +85,7 @@ def main():
         # Define the bottom layout widgets
         bottomLayoutSearch = TTkHBoxLayout()
         bls_label_1  = TTkLabel(text=" Text:", maxWidth=6)
-        bls_textbox  = TTkLineEdit()
+        bls_textbox  = TTkComboBox(editable=True, insertPolicy=TTkK.InsertAtTop)
         bls_label_2  = TTkLabel(text="Ignore case:", maxWidth=12)
         bls_cb_icase = TTkCheckbox(maxWidth=3)
         bls_search   = TTkButton(text="Search", maxWidth=10)
@@ -123,15 +123,15 @@ def main():
                 self.cb=cb
                 self.tvp=tvp
                 self.bvp=bvp
-            def search(self):
-                searchtext = self.tb.text()
+            def search(self, _=None):
+                searchtext = self.tb.currentText()
+                TTkLog.debug(f"{searchtext=}")
                 indexes = self.fb.searchRe(searchtext, ignoreCase=self.cb.checkState() == TTkK.Checked)
                 self.bvp.searchedIndexes(indexes)
                 self.tvp.searchedIndexes(indexes)
         _s = _search(bls_textbox,fileBuffer,bls_cb_icase,topViewport,bottomViewport)
         bls_search.clicked.connect(_s.search)
-        bls_textbox.returnPressed.connect(_s.search)
-
+        bls_textbox.editTextChanged.connect(_s.search)
 
     root.mainloop()
 

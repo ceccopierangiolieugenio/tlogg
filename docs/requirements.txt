@@ -6,7 +6,6 @@ charset-normalizer==2.0.4
 colorama==0.4.4
 cryptography==3.4.7
 docutils==0.17.1
-example-pkg-ceccopierangiolieugenio==0.0.1a5
 idna==3.2
 importlib-metadata==4.6.4
 jeepney==0.7.1
