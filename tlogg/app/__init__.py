@@ -25,5 +25,7 @@
 
 from .cfg import *
 from .glbl import *
+from .main import *
+from .about import About
 from .fileviewer import *
 from .preferences import *
