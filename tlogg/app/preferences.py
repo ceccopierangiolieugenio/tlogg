@@ -109,6 +109,7 @@ def filtersFormLayout(win):
         for item in listFilters.items():
             filters.append(item.data)
         TloggCfg.filters = filters
+        TloggCfg.save(searches=False,filters=True)
         TloggGlbl.refreshViews()
         # TTkHelper.updateAll()
 

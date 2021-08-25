@@ -43,7 +43,7 @@ class About(TTkAbout):
     def __init__(self, *args, **kwargs):
         TTkAbout.__init__(self, *args, **kwargs)
         self._name = kwargs.get('name' , 'About' )
-        self.setTitle('[PierCecco Cecco] Eugenio Parodi is proud to present')
+        self.setTitle('[PierCecco Cecco] Eugenio Parodi proudly presents...')
         self.resize(56,16)
 
 

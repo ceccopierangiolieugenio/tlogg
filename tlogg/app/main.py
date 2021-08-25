@@ -44,13 +44,21 @@ from .fileviewer  import *
 from .preferences import *
 
 def main():
+    TloggCfg.pathCfg = appdirs.user_config_dir("tlogg")
+
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', help='Full Screen', action='store_true')
+    # parser.add_argument('-f', help='Full Screen', action='store_true')
+    parser.add_argument('-c', help=f'config folder (default: "{TloggCfg.pathCfg}")', default=TloggCfg.pathCfg)
     parser.add_argument('filename', type=str, nargs='+',
-                    help='the filename')
+                    help='the filename/s')
     args = parser.parse_args()
 
     TTkLog.use_default_file_logging()
+
+    TloggCfg.pathCfg = args.c
+    TTkLog.debug(f"Config Path: {TloggCfg.pathCfg}")
+
+    TloggCfg.load()
 
     root = TTk(layout=TTkGridLayout())
     splitter = TTkSplitter(parent=root, orientation=TTkK.VERTICAL)
@@ -92,15 +100,17 @@ def main():
         # Define the bottom layout widgets
         bottomLayoutSearch = TTkHBoxLayout()
         bls_label_1  = TTkLabel(text=" Text:", maxWidth=6)
-        bls_textbox  = TTkComboBox(editable=True, insertPolicy=TTkK.InsertAtTop)
         bls_label_2  = TTkLabel(text="Ignore case:", maxWidth=12)
         bls_cb_icase = TTkCheckbox(maxWidth=3)
         bls_search   = TTkButton(text="Search", maxWidth=10)
+        bls_searchbox  = TTkComboBox(editable=True)
+        bls_searchbox.addItems(TloggCfg.searches)
+        bls_searchbox.setCurrentIndex(0)
 
         bottomLayoutSearch.addWidget(bls_label_2)
         bottomLayoutSearch.addWidget(bls_cb_icase)
         bottomLayoutSearch.addWidget(bls_label_1)
-        bottomLayoutSearch.addWidget(bls_textbox)
+        bottomLayoutSearch.addWidget(bls_searchbox)
         bottomLayoutSearch.addWidget(bls_search)
 
         bottomFrame.layout().addItem(bottomLayoutSearch)
@@ -123,21 +133,26 @@ def main():
         TloggGlbl.addRefView(topViewport)
         TloggGlbl.addRefView(bottomViewport)
 
-        class _search:
-            def __init__(self,tb,fb,cb,tvp,bvp):
-                self.tb=tb
-                self.fb=fb
-                self.cb=cb
-                self.tvp=tvp
-                self.bvp=bvp
-            def search(self, _=None):
-                searchtext = self.tb.currentText()
-                TTkLog.debug(f"{searchtext=}")
-                indexes = self.fb.searchRe(searchtext, ignoreCase=self.cb.checkState() == TTkK.Checked)
-                self.bvp.searchedIndexes(indexes)
-                self.tvp.searchedIndexes(indexes)
-        _s = _search(bls_textbox,fileBuffer,bls_cb_icase,topViewport,bottomViewport)
-        bls_search.clicked.connect(_s.search)
-        bls_textbox.editTextChanged.connect(_s.search)
+        def _search(_=None):
+            searchtext = bls_searchbox.currentText()
+            TTkLog.debug(f"{searchtext=}")
+            indexes = fileBuffer.searchRe(searchtext, ignoreCase=bls_cb_icase.checkState() == TTkK.Checked)
+            bottomViewport.searchedIndexes(indexes)
+            topViewport.searchedIndexes(indexes)
+            if TloggCfg.searches:
+                x = set(TloggCfg.searches)
+                TTkLog.debug(f"{x}")
+                TloggCfg.searches = list(x)
+                if searchtext in TloggCfg.searches:
+                    TloggCfg.searches.remove(searchtext)
+            TloggCfg.searches.insert(0, searchtext)
+            TloggCfg.searches = TloggCfg.searches[:TloggCfg.maxsearches]
+            TloggCfg.save(searches=True,filters=False)
+            bls_searchbox.clear()
+            bls_searchbox.addItems(TloggCfg.searches)
+            bls_searchbox.setCurrentIndex(0)
+
+        bls_search.clicked.connect(_search)
+        bls_searchbox.editTextChanged.connect(_search)
 
     root.mainloop()

@@ -22,20 +22,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
+import yaml
+
 class TloggCfg:
     version="__VERSION__"
     name="__NAME__"
-    filters=[
-        #{'pattern':"Fill",    'ignorecase':False, 'fg':"#00FFFF", 'bg':"#444400" },
-        {'pattern':"tempor",  'ignorecase':False, 'fg':"#FFFF00", 'bg':"#004444" },
-        {'pattern':"ullamco", 'ignorecase':True,  'fg':"#00FF00", 'bg':"#440044" },
-        {'pattern':"amet",    'ignorecase':False, 'fg':"#0088FF", 'bg':"#444400" },
-        #{'pattern':"minim",   'ignorecase':False, 'fg':"#888800", 'bg':"#222222" },
-        #{'pattern':"veniam",  'ignorecase':False, 'fg':"#aaaa00", 'bg':"#004444" },
-        #{'pattern':"ipsum",   'ignorecase':False, 'fg':"#00ffff", 'bg':"#440000" },
-        #{'pattern':"labore",  'ignorecase':False, 'fg':"#0000AA", 'bg':"#FFFF00" },
-        {'pattern':"\.venv",  'ignorecase':False, 'fg':"#00FFFF", 'bg':"#444400" },
-        {'pattern':"python",  'ignorecase':False, 'fg':"#FFFF00", 'bg':"#004444" },
-        {'pattern':"deploy",  'ignorecase':False, 'fg':"#FF00FF", 'bg':"#440044" },
-    ]
+    pathCfg="."
+    filters=[]
+    maxsearches=200
+    searches=[]
 
+    @staticmethod
+    def save(searches=True,filters=True):
+        os.makedirs(TloggCfg.pathCfg, exist_ok=True)
+        filtersPath  = os.path.join(TloggCfg.pathCfg,'filters.yaml')
+        searchesPath = os.path.join(TloggCfg.pathCfg,'searches.yaml')
+        if filters:
+            with open(filtersPath, 'w') as f:
+                yaml.dump(TloggCfg.filters, f, sort_keys=False, default_flow_style=False)
+        if searches:
+            with open(searchesPath, 'w') as f:
+                yaml.dump(TloggCfg.searches, f, sort_keys=False, default_flow_style=False)
+
+    @staticmethod
+    def load():
+        filtersPath = os.path.join(TloggCfg.pathCfg,'filters.yaml')
+        searchesPath = os.path.join(TloggCfg.pathCfg,'searches.yaml')
+        if not os.path.exists(filtersPath): return
+        with open(filtersPath) as f:
+            TloggCfg.filters = yaml.load(f, Loader=yaml.SafeLoader)
+        if not os.path.exists(searchesPath): return
+        with open(searchesPath) as f:
+            TloggCfg.searches = yaml.load(f, Loader=yaml.SafeLoader)
