@@ -1,3 +1,10 @@
+![Linux](https://img.shields.io/badge/-Linux-grey?logo=linux)
+![Usage](https://img.shields.io/badge/Usage-Terminal%20User%20Interface-yellow)
+![Python](https://img.shields.io/badge/Python-v3.8%5E-green?logo=python)
+![tlogg_version](https://img.shields.io/github/v/tag/ceccopierangiolieugenio/tlogg?label=version)
+[![pypi_version](https://img.shields.io/pypi/v/tlogg?label=pypi)](https://pypi.org/project/tlogg)
+[![pypi_version](https://img.shields.io/twitter/follow/Pier95886803?style=social&logo=twitter)](https://twitter.com/hashtag/pyTermTk?src=hashtag_click&f=live)
+
 # tlogg
 A fast, advanced [text-based](https://en.wikipedia.org/wiki/Text-based_user_interface) log explorer inspired by [glogg - the fast, smart log explorer](https://github.com/nickbnf/glogg)
 
@@ -8,7 +15,7 @@ A fast, advanced [text-based](https://en.wikipedia.org/wiki/Text-based_user_inte
 - Bookmarks
 - Shiny ASCII Red Peppers
 
-# Install
+# Install from [pypi](https://pypi.org/project/tlogg)
 ```bash
 pip install tlogg
 ```
