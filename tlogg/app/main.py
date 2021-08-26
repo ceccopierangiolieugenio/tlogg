@@ -101,7 +101,7 @@ def main():
         bottomLayoutSearch = TTkHBoxLayout()
         bls_label_1  = TTkLabel(text=" Text:", maxWidth=6)
         bls_label_2  = TTkLabel(text="Ignore case:", maxWidth=12)
-        bls_cb_icase = TTkCheckbox(maxWidth=3)
+        bls_cb_icase = TTkCheckbox(maxWidth=3, checked=True)
         bls_search   = TTkButton(text="Search", maxWidth=10)
         bls_searchbox  = TTkComboBox(editable=True)
         bls_searchbox.addItems(TloggCfg.searches)
@@ -116,7 +116,7 @@ def main():
         bottomFrame.layout().addItem(bottomLayoutSearch)
 
         # Define the main file Viewer
-        fileBuffer = TTkFileBuffer(file, 0x1000, 0x10)
+        fileBuffer = TTkFileBuffer(file, 0x100, 0x1000)
         topViewport = FileViewer(filebuffer=fileBuffer)
         topViewer = FileViewerArea(parent=topFrame, fileView=topViewport)
         fileBuffer.indexUpdated.connect(topViewport.fileIndexing)

@@ -199,7 +199,8 @@ class FileViewerSearch(FileViewer):
         if self._indexes:
             allIndexes = self._indexes
             for i in range(min(self.height(),len(allIndexes)-oy)):
-                line = self._fileBuffer.getLineDirect(allIndexes[i+oy])
+                # line = self._fileBuffer.getLineDirect(allIndexes[i+oy])
+                line = self._fileBuffer.getLine(allIndexes[i+oy])
                 if allIndexes[i+oy] in self._indexesMark:
                     color = TTkColor.fg("#00ffff")
                     numberColor = TTkColor.bg("#444444")
