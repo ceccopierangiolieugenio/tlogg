@@ -133,26 +133,33 @@ def main():
         TloggGlbl.addRefView(topViewport)
         TloggGlbl.addRefView(bottomViewport)
 
-        def _search(_=None):
-            searchtext = bls_searchbox.currentText()
-            TTkLog.debug(f"{searchtext=}")
-            indexes = fileBuffer.searchRe(searchtext, ignoreCase=bls_cb_icase.checkState() == TTkK.Checked)
-            bottomViewport.searchedIndexes(indexes)
-            topViewport.searchedIndexes(indexes)
-            if TloggCfg.searches:
-                x = set(TloggCfg.searches)
-                TTkLog.debug(f"{x}")
-                TloggCfg.searches = list(x)
-                if searchtext in TloggCfg.searches:
-                    TloggCfg.searches.remove(searchtext)
-            TloggCfg.searches.insert(0, searchtext)
-            TloggCfg.searches = TloggCfg.searches[:TloggCfg.maxsearches]
-            TloggCfg.save(searches=True,filters=False)
-            bls_searchbox.clear()
-            bls_searchbox.addItems(TloggCfg.searches)
-            bls_searchbox.setCurrentIndex(0)
+        def _makeSearch():
+            sb = bls_searchbox
+            fb = fileBuffer
+            cb = bls_cb_icase
+            bwp = bottomViewport
+            twp = topViewport
+            def _search(_=None):
+                searchtext = sb.currentText()
+                TTkLog.debug(f"{searchtext=}")
+                indexes = fb.searchRe(searchtext, ignoreCase=cb.checkState() == TTkK.Checked)
+                bwp.searchedIndexes(indexes)
+                twp.searchedIndexes(indexes)
+                if TloggCfg.searches:
+                    x = set(TloggCfg.searches)
+                    TTkLog.debug(f"{x}")
+                    TloggCfg.searches = list(x)
+                    if searchtext in TloggCfg.searches:
+                        TloggCfg.searches.remove(searchtext)
+                TloggCfg.searches.insert(0, searchtext)
+                TloggCfg.searches = TloggCfg.searches[:TloggCfg.maxsearches]
+                TloggCfg.save(searches=True,filters=False)
+                sb.clear()
+                sb.addItems(TloggCfg.searches)
+                sb.setCurrentIndex(0)
+            return _search
 
-        bls_search.clicked.connect(_search)
-        bls_searchbox.editTextChanged.connect(_search)
+        bls_search.clicked.connect(_makeSearch())
+        bls_searchbox.editTextChanged.connect(_makeSearch())
 
     root.mainloop()
