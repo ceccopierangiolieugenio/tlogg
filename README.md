@@ -1,8 +1,12 @@
 # tlogg
-A fast, advanced [TUI](https://en.wikipedia.org/wiki/Text-based_user_interface) log explorer inspired by [glogg - the fast, smart log explorer](https://github.com/nickbnf/glogg)
+A fast, advanced [text-based](https://en.wikipedia.org/wiki/Text-based_user_interface) log explorer inspired by [glogg - the fast, smart log explorer](https://github.com/nickbnf/glogg)
 
-[![screenshot](https://raw.githubusercontent.com/ceccopierangiolieugenio/binaryRepo/master/tlogg/screenshot.001.png
-)](https://pypi.org/project/tlogg)
+[![screenshot](https://raw.githubusercontent.com/ceccopierangiolieugenio/binaryRepo/master/tlogg/screenshot.001.png)](https://pypi.org/project/tlogg)
+## Features
+- Search Panel
+- Highlight
+- Bookmarks
+- Shiny ASCII Red Peppers
 
 # Install
 ```bash
