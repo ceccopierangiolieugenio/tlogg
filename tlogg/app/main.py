@@ -31,11 +31,13 @@ import appdirs
 
 from TermTk import *
 
-from TermTk import TTk, TTkK, TTkLog, TTkColor
+from TermTk import TTk, TTkK, TTkLog, TTkColor, TTkTheme
 from TermTk import pyTTkSlot, pyTTkSignal
 from TermTk import TTkFrame
 from TermTk import TColor, TText
 from TermTk import TTkAbstractScrollArea, TTkAbstractScrollView
+from TermTk import TTkFileDialogPicker
+from TermTk import TTkFileTree
 
 from .cfg  import *
 from .glbl import *
@@ -60,11 +62,35 @@ def main():
 
     TloggCfg.load()
 
+    '''
+        ┌─────────────────[Main Splitter]─────────┐
+        │┌─────────╥────[File Tab Splitter]──────┐│
+        ││ File    ║       Tab                   ││
+        ││ Tree    ╟─────────────────────────────┤│
+        ││         ║┌───────────────────────────┐││
+        ││         ║│   File Viewer             │││
+        ││         ║│                           │││
+        ││         ║╞═══════════════════════════╡││
+        ││         ║│   Search Widget           │││
+        ││         ║│                           │││
+        ││         ║└───────────────────────────┘││
+        │└─────────╨─────────────────────────────┘│
+        ╞═════════════════════════════════════════╡
+        │ Logger,Debug View                       │
+        └─────────────────────────────────────────┘
+    '''
+
+    TTkTheme.loadTheme(ttk.TTkTheme.NERD)
+
+
     root = TTk(layout=TTkGridLayout())
-    splitter = TTkSplitter(parent=root, orientation=TTkK.VERTICAL)
-    tab = TTkTabWidget(parent=splitter, border=False)
-    # tab = TTkTabWidget(parent=splitter, border=True)
-    splitter.addWidget(TTkLogViewer(),3)
+    mainSplitter    = TTkSplitter(parent=root, orientation=TTkK.VERTICAL)
+    fileTabSplitter = TTkSplitter(parent=mainSplitter, orientation=TTkK.HORIZONTAL)
+    fileTree = TTkFileTree(parent=fileTabSplitter, path=".")
+    tab      = TTkTabWidget(parent=fileTabSplitter, border=False)
+    fileTabSplitter.setSizes([20,100])
+    # tab = TTkTabWidget(parent=fileTabSplitter, border=True)
+    mainSplitter.addWidget(TTkLogViewer(),3)
 
 
     fileMenu = tab.addMenu("[&File]")
@@ -78,21 +104,10 @@ def main():
     buttonExit    = fileMenu.addMenu("Exit")
     buttonExit.menuButtonClicked.connect(lambda _: root.quit())
 
-    def showFilters(btn):
-        win = TTkWindow(title="Filters...", size=(70,20), border=True)
-        win.setLayout(filtersFormLayout(win))
-        TTkHelper.overlay(buttonFilters, win, 0,0)
-    buttonFilters.menuButtonClicked.connect(showFilters)
-
-    def showAbout(btn):
-        TTkHelper.overlay(buttonFilters, About(), 0,0)
-    buttonAbout.menuButtonClicked.connect(showAbout)
-
-    # tab.addTab(preferencesForm(), "-Setup-")
-
-    for file in args.filename:
+    def openFile(file):
         tabSplitter = TTkSplitter(orientation=TTkK.VERTICAL)
         tab.addTab(tabSplitter, file)
+        tab.setCurrentWidget(tabSplitter)
         topFrame    = TTkFrame(parent=tabSplitter, border=False, layout=TTkVBoxLayout())
         bottomFrame = TTkFrame(parent=tabSplitter, border=False, layout=TTkVBoxLayout())
 
@@ -161,5 +176,33 @@ def main():
 
         bls_search.clicked.connect(_makeSearch())
         bls_searchbox.editTextChanged.connect(_makeSearch())
+
+    for file in args.filename:
+        openFile(file)
+
+    fileTree.fileActivated.connect(lambda x: openFile(x.path()))
+
+    def openFileCallback(btn):
+        filePicker = TTkFileDialogPicker(
+                        pos = (3,3), size=(90,30),
+                        caption="Open a File", path=".",
+                        filter="All Files (*);;Text Files (*.txt);;Log Files (*.log)")
+        filePicker.filePicked.connect(openFile)
+        TTkHelper.overlay(tab, filePicker, 2, 1)
+    buttonOpen.menuButtonClicked.connect(openFileCallback)
+
+
+
+    def showFilters(btn):
+        win = TTkWindow(title="Filters...", size=(70,20), border=True)
+        win.setLayout(filtersFormLayout(win))
+        TTkHelper.overlay(buttonFilters, win, 0,0)
+    buttonFilters.menuButtonClicked.connect(showFilters)
+
+    def showAbout(btn):
+        TTkHelper.overlay(buttonFilters, About(), 0,0)
+    buttonAbout.menuButtonClicked.connect(showAbout)
+
+    # tab.addTab(preferencesForm(), "-Setup-")
 
     root.mainloop()

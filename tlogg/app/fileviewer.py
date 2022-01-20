@@ -26,12 +26,14 @@ import os
 import re
 import sys
 import argparse
+from tkinter import UNDERLINE
 
 from TermTk import *
 
 from TermTk import TTkK
 from TermTk import TTkLog
 from TermTk import TTkColor
+from TermTk import TTkString
 from TermTk import TTk
 from TermTk import TTkFileBuffer
 from TermTk import TTkFrame
@@ -119,7 +121,7 @@ class FileViewer(TTkAbstractScrollView):
     def paintEvent(self):
         ox,oy = self.getViewOffsets()
         for i in range(min(self.height(),self._fileBuffer.getLen()-oy)):
-            line = self._fileBuffer.getLine(i+oy)
+            line = TTkString() + self._fileBuffer.getLine(i+oy)
             if (i+oy) in self._indexesMark:
                 color = TTkColor.fg("#00ffff")
                 symbol='❥'
@@ -136,11 +138,15 @@ class FileViewer(TTkAbstractScrollView):
                 # Check in the filters a matching color
                 for filter in TloggCfg.filters:
                     #TTkLog.debug(f"{filter['pattern']} - {line}")
-                    if re.search(filter['pattern'],line):
-                        #TTkLog.debug("MATCHED")
+                    if m := line.findall(regexp=filter['pattern']):
                         selectedColor = TTkColor.fg(filter['fg'])+TTkColor.bg(filter['bg'])
+                        line = line.setColor(selectedColor)
+                        for match in m:
+                            line = line.setColor(selectedColor+TTkColor.UNDERLINE, match=match)
+                        break
             self.getCanvas().drawText(pos=(0,i), text=symbol, color=color)
-            self.getCanvas().drawText(pos=(2,i), text=line.replace('\t','    ').replace('\n','')[ox:], color=selectedColor )
+            self.getCanvas().drawText(pos=(2,i), text=line.replace('\t','    ').replace('\n','').substring(ox), color=selectedColor, width=self.width(), )
+        # Draw the loading banner
         if self._indexing is not None:
             self.getCanvas().drawText(pos=(0,0), text=f" [ Indexed: {int(100*self._indexing)}% ] ")
 
@@ -200,7 +206,7 @@ class FileViewerSearch(FileViewer):
             allIndexes = self._indexes
             for i in range(min(self.height(),len(allIndexes)-oy)):
                 # line = self._fileBuffer.getLineDirect(allIndexes[i+oy])
-                line = self._fileBuffer.getLine(allIndexes[i+oy])
+                line = TTkString() + self._fileBuffer.getLine(allIndexes[i+oy])
                 if allIndexes[i+oy] in self._indexesMark:
                     color = TTkColor.fg("#00ffff")
                     numberColor = TTkColor.bg("#444444")
@@ -220,17 +226,20 @@ class FileViewerSearch(FileViewer):
                     # Check in the filters a matching color
                     for filter in TloggCfg.filters:
                         #TTkLog.debug(f"{filter['pattern']} - {line}")
-                        if re.search(filter['pattern'],line):
-                            #TTkLog.debug("MATCHED")
-                            selectedColor = TTkColor.fg(filter['fg'])+TTkColor.bg(filter['bg'])
+                        if m := line.findall(regexp=filter['pattern']):
+                            line = line.setColor(TTkColor.fg(filter['fg'])+TTkColor.bg(filter['bg']))
+                            for match in m:
+                                line = line.setColor(TTkColor.fg(filter['fg'])+TTkColor.bg(filter['bg'])+TTkColor.UNDERLINE, match=match)
+                            break
                 lenLineNumber = len(str(allIndexes[-1]))
                 self.getCanvas().drawText(pos=(0,i), text=symbol, color=color)
                 # Draw Linenumber
                 self.getCanvas().drawText(
                                     pos=(3+lenLineNumber,i),
-                                    text=line.replace('\t','    ').replace('\n','')[ox:], color=selectedColor )
+                                    text=line.replace('\t','    ').replace('\n','').substring(ox), color=selectedColor, width=self.width())
                 # Draw Line
                 self.getCanvas().drawText(pos=(2,i), text=str(allIndexes[i+oy])+" "*lenLineNumber, width=lenLineNumber, color=numberColor)
+
         if self._indexing is not None:
             self.getCanvas().drawText(pos=(0,0), text=f" [ Indexed: {int(100*self._indexing)}% ] ")
 
