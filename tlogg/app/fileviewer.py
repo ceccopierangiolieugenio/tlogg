@@ -47,7 +47,7 @@ from . import TloggCfg
 
 class FileViewer(TTkAbstractScrollView):
     __slots__ = (
-        '_fileBuffer', '_indexesMark', '_indexesSearched', '_selected', '_indexing',
+        '_fileBuffer', '_indexesMark', '_indexesSearched', '_selected', '_indexing', '_searchRe',
         # Signals
         'selected', 'marked')
     def __init__(self, *args, **kwargs):
@@ -55,6 +55,7 @@ class FileViewer(TTkAbstractScrollView):
         self._indexesSearched = []
         self._indexing = None
         self._selected = -1
+        self._searchRe = ""
         # Signals
         self.selected = pyTTkSignal(int)
         self.marked = pyTTkSignal(list)
@@ -85,10 +86,14 @@ class FileViewer(TTkAbstractScrollView):
         self._indexesSearched = indexes
         self.viewChanged.emit()
 
+    def searchRe(self, searchRe):
+        self._searchRe = searchRe
+        self.update()
+
     def viewFullAreaSize(self) -> (int, int):
         w = 2+self._fileBuffer.getWidth()
         h = self._fileBuffer.getLen()
-        return w , h
+        return ( w , h )
 
     def viewDisplayedSize(self) -> (int, int):
         return self.size()
@@ -118,34 +123,60 @@ class FileViewer(TTkAbstractScrollView):
         self.viewMoveTo(ox, max(0,line-self.height()//2))
         self.update()
 
+    def getLen(self):
+        return self._fileBuffer.getLen()
+
+    def getLine(self, num) -> str:
+        return self._fileBuffer.getLine(num)
+
+    def getLineNum(self, num) -> int:
+        return num
+
     def paintEvent(self):
         ox,oy = self.getViewOffsets()
-        for i in range(min(self.height(),self._fileBuffer.getLen()-oy)):
-            line = TTkString() + self._fileBuffer.getLine(i+oy)
-            if (i+oy) in self._indexesMark:
+        bufferLen = self.getLen()
+        for i in range(min(self.height(),bufferLen-oy)):
+            line = TTkString() + self.getLine(i+oy).replace('\t','    ').replace('\n','')
+            lineNum = self.getLineNum(i+oy)
+            if lineNum in self._indexesMark:
                 color = TTkColor.fg("#00ffff")
+                numberColor = TTkColor.bg("#444444")
                 symbol='❥'
-            elif (i+oy) in self._indexesSearched:
+            elif lineNum in self._indexesSearched:
                 color = TTkColor.fg("#ff0000")
+                numberColor = TTkColor.bg("#444444")
                 symbol='●'
             else:
                 color = TTkColor.fg("#0000ff")
+                numberColor = TTkColor.bg("#444444")
                 symbol='○'
+
             if i+oy == self._selected:
                 selectedColor = TTkColor.bg("#008844")
+                line = line.setColor(selectedColor)
             else:
                 selectedColor = TTkColor.RST
+                searchedColor = TTkColor.fg("#000000")+TTkColor.bg("#AAAAAA")
                 # Check in the filters a matching color
                 for filter in TloggCfg.filters:
                     #TTkLog.debug(f"{filter['pattern']} - {line}")
                     if m := line.findall(regexp=filter['pattern']):
                         selectedColor = TTkColor.fg(filter['fg'])+TTkColor.bg(filter['bg'])
+                        searchedColor = TTkColor.fg(filter['bg'])+TTkColor.bg(filter['fg'])
                         line = line.setColor(selectedColor)
-                        for match in m:
-                            line = line.setColor(selectedColor+TTkColor.UNDERLINE, match=match)
                         break
-            self.getCanvas().drawText(pos=(0,i), text=symbol, color=color)
-            self.getCanvas().drawText(pos=(2,i), text=line.replace('\t','    ').replace('\n','').substring(ox), color=selectedColor, width=self.width(), )
+            if self._searchRe:
+                if m := line.findall(regexp=self._searchRe):
+                    for match in m:
+                        line = line.setColor(searchedColor, match=match)
+
+
+            # Add Line Number
+            lenLineNumber = len(str(self.getLineNum(bufferLen-1)))
+            lineNumber = TTkString() + numberColor + str(lineNum).rjust(lenLineNumber) + TTkColor.RST + ' '
+            # Compose print line
+            printLine = TTkString() + color + symbol + TTkColor.RST + ' ' + lineNumber + line.substring(ox)
+            self.getCanvas().drawText(pos=(0,i), text=printLine, color=selectedColor, width=self.width(), )
         # Draw the loading banner
         if self._indexing is not None:
             self.getCanvas().drawText(pos=(0,0), text=f" [ Indexed: {int(100*self._indexing)}% ] ")
@@ -200,48 +231,14 @@ class FileViewerSearch(FileViewer):
             return True
         return False
 
-    def paintEvent(self):
-        ox,oy = self.getViewOffsets()
-        if self._indexes:
-            allIndexes = self._indexes
-            for i in range(min(self.height(),len(allIndexes)-oy)):
-                # line = self._fileBuffer.getLineDirect(allIndexes[i+oy])
-                line = TTkString() + self._fileBuffer.getLine(allIndexes[i+oy])
-                if allIndexes[i+oy] in self._indexesMark:
-                    color = TTkColor.fg("#00ffff")
-                    numberColor = TTkColor.bg("#444444")
-                    symbol='❥'
-                elif allIndexes[i+oy] in self._indexesSearched:
-                    color = TTkColor.fg("#ff0000")
-                    numberColor = TTkColor.bg("#444444")
-                    symbol='●'
-                else:
-                    color = TTkColor.fg("#0000ff")
-                    numberColor = TTkColor.bg("#444444")
-                    symbol='○'
-                if i+oy == self._selected:
-                    selectedColor = TTkColor.bg("#008844")
-                else:
-                    selectedColor = TTkColor.RST
-                    # Check in the filters a matching color
-                    for filter in TloggCfg.filters:
-                        #TTkLog.debug(f"{filter['pattern']} - {line}")
-                        if m := line.findall(regexp=filter['pattern']):
-                            line = line.setColor(TTkColor.fg(filter['fg'])+TTkColor.bg(filter['bg']))
-                            for match in m:
-                                line = line.setColor(TTkColor.fg(filter['fg'])+TTkColor.bg(filter['bg'])+TTkColor.UNDERLINE, match=match)
-                            break
-                lenLineNumber = len(str(allIndexes[-1]))
-                self.getCanvas().drawText(pos=(0,i), text=symbol, color=color)
-                # Draw Linenumber
-                self.getCanvas().drawText(
-                                    pos=(3+lenLineNumber,i),
-                                    text=line.replace('\t','    ').replace('\n','').substring(ox), color=selectedColor, width=self.width())
-                # Draw Line
-                self.getCanvas().drawText(pos=(2,i), text=str(allIndexes[i+oy])+" "*lenLineNumber, width=lenLineNumber, color=numberColor)
+    def getLen(self):
+        return len(self._indexes)
 
-        if self._indexing is not None:
-            self.getCanvas().drawText(pos=(0,0), text=f" [ Indexed: {int(100*self._indexing)}% ] ")
+    def getLine(self, num) -> str:
+        return self._fileBuffer.getLine(self._indexes[num])
+
+    def getLineNum(self, num) -> int:
+        return self._indexes[num]
 
 class FileViewerArea(TTkAbstractScrollArea):
     __slots__ = ('_fileView')

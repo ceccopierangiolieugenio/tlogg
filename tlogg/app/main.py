@@ -159,7 +159,9 @@ def main():
                 TTkLog.debug(f"{searchtext=}")
                 indexes = fb.searchRe(searchtext, ignoreCase=cb.checkState() == TTkK.Checked)
                 bwp.searchedIndexes(indexes)
+                bwp.searchRe(searchtext)
                 twp.searchedIndexes(indexes)
+                twp.searchRe(searchtext)
                 if TloggCfg.searches:
                     x = set(TloggCfg.searches)
                     TTkLog.debug(f"{x}")
