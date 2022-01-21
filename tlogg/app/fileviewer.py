@@ -166,7 +166,7 @@ class FileViewer(TTkAbstractScrollView):
                         line = line.setColor(selectedColor)
                         break
             if self._searchRe:
-                if m := line.findall(regexp=self._searchRe):
+                if m := line.findall(regexp=self._searchRe, ignoreCase=True):
                     for match in m:
                         line = line.setColor(searchedColor, match=match)
 
