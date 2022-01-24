@@ -32,12 +32,12 @@ from . import TloggCfg, TloggGlbl
 
 from TermTk import *
 
-def filtersFormLayout(win):
+def highlightersFormLayout(win):
     '''
     This form is inspired by glogg "Filters..." form
     '''
 
-    filters = copy.deepcopy(TloggCfg.filters)
+    colors = copy.deepcopy(TloggCfg.colors)
 
     leftRightLayout = TTkHBoxLayout()
     leftLayout        = TTkGridLayout()
@@ -46,10 +46,10 @@ def filtersFormLayout(win):
     leftRightLayout.addItem(leftLayout)
     leftRightLayout.addItem(rightLayout)
 
-    frameFilters = TTkFrame(border=True, layout=TTkGridLayout())
-    leftLayout.addWidget(frameFilters,0,0,1,5)
+    frameColors = TTkFrame(border=True, layout=TTkGridLayout())
+    leftLayout.addWidget(frameColors,0,0,1,5)
 
-    listFilters = TTkList(parent=frameFilters)
+    listColors = TTkList(parent=frameColors)
 
     addButton    = TTkButton(text="+",maxWidth=3)
     removeButton = TTkButton(text="-",maxWidth=3)
@@ -79,18 +79,18 @@ def filtersFormLayout(win):
 
     def _move(offset):
         def _moveUpDown():
-            if items := listFilters.selectedItems():
+            if items := listColors.selectedItems():
                 item = items[0]
-                index = listFilters.indexOf(item)
-                listFilters.moveItem(index,index+offset)
+                index = listColors.indexOf(item)
+                listColors.moveItem(index,index+offset)
         return _moveUpDown
     upButton.clicked.connect(_move(-1))
     downButton.clicked.connect(_move(1))
 
     def _addCallback():
-        filter = {'pattern':"<PATTERN>", 'ignorecase':True, 'fg':"#FFFFFF", 'bg':"#000000" }
-        filters.append(filter)
-        listFilters.addItem(item=filter['pattern'],data=filter)
+        color = {'pattern':"<PATTERN>", 'ignorecase':True, 'fg':"#FFFFFF", 'bg':"#000000" }
+        colors.append(color)
+        listColors.addItem(item=color['pattern'],data=color)
     addButton.clicked.connect(_addCallback)
 
     def _removeCallback():
@@ -99,67 +99,67 @@ def filtersFormLayout(win):
         ignoreCase.clicked.clear()
         fgColor.colorSelected.clear()
         bgColor.colorSelected.clear()
-        if items := listFilters.selectedItems():
-            filters.remove(items[0].data)
-            listFilters.removeItem(items[0])
+        if items := listColors.selectedItems():
+            colors.remove(items[0].data)
+            listColors.removeItem(items[0])
     removeButton.clicked.connect(_removeCallback)
 
-    def _saveFilters():
-        filters = []
-        for item in listFilters.items():
-            filters.append(item.data)
-        TloggCfg.filters = filters
-        TloggCfg.save(searches=False,filters=True)
+    def _saveColors():
+        colors = []
+        for item in listColors.items():
+            colors.append(item.data)
+        TloggCfg.colors = colors
+        TloggCfg.save(searches=False, filters=False, colors=True)
         TloggGlbl.refreshViews()
         # TTkHelper.updateAll()
 
-    applyBtn.clicked.connect(_saveFilters)
-    okBtn.clicked.connect(_saveFilters)
+    applyBtn.clicked.connect(_saveColors)
+    okBtn.clicked.connect(_saveColors)
     okBtn.clicked.connect(win.close)
     cancelBtn.clicked.connect(win.close)
 
     @ttk.pyTTkSlot(TTkWidget)
     def _listCallback(item):
-        if filter:=item.data:
+        if color:=item.data:
             # Clear all the signals
             pattern.textEdited.clear()
             ignoreCase.clicked.clear()
             fgColor.colorSelected.clear()
             bgColor.colorSelected.clear()
-            # Config the filter widgets
-            pattern.setText(filter['pattern'])
-            ignoreCase.setCheckState(TTkK.Checked if filter['ignorecase'] else TTkK.Unchecked)
-            fgColor.setColor(TTkColor.bg(filter['fg']))
-            bgColor.setColor(TTkColor.bg(filter['bg']))
+            # Config the color widgets
+            pattern.setText(color['pattern'])
+            ignoreCase.setCheckState(TTkK.Checked if color['ignorecase'] else TTkK.Unchecked)
+            fgColor.setColor(TTkColor.bg(color['fg']))
+            bgColor.setColor(TTkColor.bg(color['bg']))
             # Connect the actions
             ## Pattern Line Edit
             def _setPattern(p):
                 item.text=p
-                filter['pattern'] = p
+                color['pattern'] = p
             pattern.textEdited.connect(_setPattern)
             ## Case Sensitivity checkbox
-            def _setCase(c):filter['ignorecase'] = c
+            def _setCase(c):color['ignorecase'] = c
             ignoreCase.clicked.connect(_setCase)
             ## Color Button
-            def _setFg(c):filter['fg'] = c.getHex(TTkK.Background)
-            def _setBg(c):filter['bg'] = c.getHex(TTkK.Background)
+            def _setFg(c):color['fg'] = c.getHex(TTkK.Background)
+            def _setBg(c):color['bg'] = c.getHex(TTkK.Background)
             fgColor.colorSelected.connect(_setFg)
             bgColor.colorSelected.connect(_setBg)
 
 
-    listFilters.itemClicked.connect(_listCallback)
+    listColors.itemClicked.connect(_listCallback)
 
-    for i,filter in enumerate(filters):
-        # ali = TTkAbstractListItem(text=filter['pattern'],data=filter)
-        listFilters.addItem(item=filter['pattern'],data=filter)
+    for i,color in enumerate(colors):
+        # ali = TTkAbstractListItem(text=color['pattern'],data=color)
+        listColors.addItem(item=color['pattern'],data=color)
 
     return leftRightLayout
 
-def preferencesForm(root=None):
+def highlightersForm(root=None):
     preferencesLayout = TTkGridLayout(columnMinWidth=1)
     frame = TTkFrame(parent=root, layout=preferencesLayout, border=0)
 
-    frameFilters = TTkFrame(border=True, title="Filters...", layout=filtersFormLayout())
-    preferencesLayout.addWidget(frameFilters,0,0)
+    frameColors = TTkFrame(border=True, title="Highlighters...", layout=highlightersFormLayout())
+    preferencesLayout.addWidget(frameColors,0,0)
 
     return frame

@@ -29,15 +29,20 @@ class TloggCfg:
     version="__VERSION__"
     name="__NAME__"
     pathCfg="."
+    colors=[]
     filters=[]
     maxsearches=200
     searches=[]
 
     @staticmethod
-    def save(searches=True,filters=True):
+    def save(searches=True, filters=True, colors=True):
         os.makedirs(TloggCfg.pathCfg, exist_ok=True)
+        colorsPath   = os.path.join(TloggCfg.pathCfg,'colors.yaml')
         filtersPath  = os.path.join(TloggCfg.pathCfg,'filters.yaml')
         searchesPath = os.path.join(TloggCfg.pathCfg,'searches.yaml')
+        if colors:
+            with open(colorsPath, 'w') as f:
+                yaml.dump(TloggCfg.colors, f, sort_keys=False, default_flow_style=False)
         if filters:
             with open(filtersPath, 'w') as f:
                 yaml.dump(TloggCfg.filters, f, sort_keys=False, default_flow_style=False)
@@ -47,11 +52,15 @@ class TloggCfg:
 
     @staticmethod
     def load():
-        filtersPath = os.path.join(TloggCfg.pathCfg,'filters.yaml')
+        colorsPath   = os.path.join(TloggCfg.pathCfg,'colors.yaml')
+        filtersPath  = os.path.join(TloggCfg.pathCfg,'filters.yaml')
         searchesPath = os.path.join(TloggCfg.pathCfg,'searches.yaml')
-        if not os.path.exists(filtersPath): return
-        with open(filtersPath) as f:
-            TloggCfg.filters = yaml.load(f, Loader=yaml.SafeLoader)
-        if not os.path.exists(searchesPath): return
-        with open(searchesPath) as f:
-            TloggCfg.searches = yaml.load(f, Loader=yaml.SafeLoader)
+        if os.path.exists(colorsPath):
+            with open(colorsPath) as f:
+                TloggCfg.colors = yaml.load(f, Loader=yaml.SafeLoader)
+        if os.path.exists(filtersPath):
+            with open(filtersPath) as f:
+                TloggCfg.filters = yaml.load(f, Loader=yaml.SafeLoader)
+        if os.path.exists(searchesPath):
+            with open(searchesPath) as f:
+                TloggCfg.searches = yaml.load(f, Loader=yaml.SafeLoader)

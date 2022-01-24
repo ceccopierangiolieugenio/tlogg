@@ -43,7 +43,7 @@ from .cfg  import *
 from .glbl import *
 from .about import *
 from .fileviewer  import *
-from .preferences import *
+from .highlighters import *
 
 def main():
     TloggCfg.pathCfg = appdirs.user_config_dir("tlogg")
@@ -97,7 +97,9 @@ def main():
     buttonOpen    = fileMenu.addMenu("Open")
     buttonClose   = fileMenu.addMenu("Close")
     fileMenu.addSpacer()
+    buttonColors  = fileMenu.addMenu("&Colors...")
     buttonFilters = fileMenu.addMenu("&Filters...")
+    buttonOptions = fileMenu.addMenu("&Options...")
     fileMenu.addSpacer()
     buttonAbout = fileMenu.addMenu("&About...")
     fileMenu.addSpacer()
@@ -196,15 +198,15 @@ def main():
 
 
     def showFilters(btn):
-        win = TTkWindow(title="Filters...", size=(70,20), border=True)
-        win.setLayout(filtersFormLayout(win))
-        TTkHelper.overlay(buttonFilters, win, 0,0)
-    buttonFilters.menuButtonClicked.connect(showFilters)
+        win = TTkWindow(title="Highlighters...", size=(70,20), border=True)
+        win.setLayout(highlightersFormLayout(win))
+        TTkHelper.overlay(buttonColors, win, 0,0)
+    buttonColors.menuButtonClicked.connect(showFilters)
 
     def showAbout(btn):
-        TTkHelper.overlay(buttonFilters, About(), 0,0)
+        TTkHelper.overlay(buttonColors, About(), 0,0)
     buttonAbout.menuButtonClicked.connect(showAbout)
 
-    # tab.addTab(preferencesForm(), "-Setup-")
+    # tab.addTab(highlightersForm(), "-Setup-")
 
     root.mainloop()
