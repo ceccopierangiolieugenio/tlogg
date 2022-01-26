@@ -109,7 +109,7 @@ def highlightersFormLayout(win):
         for item in listColors.items():
             colors.append(item.data)
         TloggCfg.colors = colors
-        TloggCfg.save(searches=False, filters=False, colors=True)
+        TloggCfg.save(searches=False, filters=False, colors=True, options=False)
         TloggGlbl.refreshViews()
         # TTkHelper.updateAll()
 

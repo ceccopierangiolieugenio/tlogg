@@ -43,7 +43,8 @@ from .cfg  import *
 from .glbl import *
 from .about import *
 from .fileviewer  import *
-from .highlighters import *
+from .options import optionsFormLayout, optionsLoadTheme
+from .highlighters import highlightersFormLayout
 
 def main():
     TloggCfg.pathCfg = appdirs.user_config_dir("tlogg")
@@ -79,9 +80,9 @@ def main():
         │ Logger,Debug View                       │
         └─────────────────────────────────────────┘
     '''
-
-    TTkTheme.loadTheme(ttk.TTkTheme.NERD)
-
+    if 'theme' not in TloggCfg.options:
+        TloggCfg.options['theme'] = 'UTF8'
+    optionsLoadTheme(TloggCfg.options['theme'])
 
     root = TTk(layout=TTkGridLayout())
     mainSplitter    = TTkSplitter(parent=root, orientation=TTkK.VERTICAL)
@@ -195,13 +196,17 @@ def main():
         TTkHelper.overlay(tab, filePicker, 2, 1)
     buttonOpen.menuButtonClicked.connect(openFileCallback)
 
-
-
     def showFilters(btn):
         win = TTkWindow(title="Highlighters...", size=(70,20), border=True)
         win.setLayout(highlightersFormLayout(win))
         TTkHelper.overlay(buttonColors, win, 0,0)
     buttonColors.menuButtonClicked.connect(showFilters)
+
+    def showOptions(btn):
+        win = TTkWindow(title="Options...", size=(70,20), border=True)
+        win.setLayout(optionsFormLayout(win))
+        TTkHelper.overlay(buttonOptions, win, 0,0)
+    buttonOptions.menuButtonClicked.connect(showOptions )
 
     def showAbout(btn):
         TTkHelper.overlay(buttonColors, About(), 0,0)

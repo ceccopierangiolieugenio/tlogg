@@ -27,5 +27,6 @@ from .cfg import *
 from .glbl import *
 from .main import *
 from .about import About
+from .options import optionsFormLayout
 from .fileviewer import *
-from .highlighters import *
+from .highlighters import highlightersFormLayout

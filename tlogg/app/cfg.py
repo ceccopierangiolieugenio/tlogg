@@ -31,14 +31,16 @@ class TloggCfg:
     pathCfg="."
     colors=[]
     filters=[]
-    maxsearches=200
+    options={}
     searches=[]
+    maxsearches=200
 
     @staticmethod
-    def save(searches=True, filters=True, colors=True):
+    def save(searches=True, filters=True, colors=True, options=True):
         os.makedirs(TloggCfg.pathCfg, exist_ok=True)
         colorsPath   = os.path.join(TloggCfg.pathCfg,'colors.yaml')
         filtersPath  = os.path.join(TloggCfg.pathCfg,'filters.yaml')
+        optionsPath  = os.path.join(TloggCfg.pathCfg,'options.yaml')
         searchesPath = os.path.join(TloggCfg.pathCfg,'searches.yaml')
         if colors:
             with open(colorsPath, 'w') as f:
@@ -46,6 +48,9 @@ class TloggCfg:
         if filters:
             with open(filtersPath, 'w') as f:
                 yaml.dump(TloggCfg.filters, f, sort_keys=False, default_flow_style=False)
+        if options:
+            with open(optionsPath, 'w') as f:
+                yaml.dump(TloggCfg.options, f, sort_keys=False, default_flow_style=False)
         if searches:
             with open(searchesPath, 'w') as f:
                 yaml.dump(TloggCfg.searches, f, sort_keys=False, default_flow_style=False)
@@ -54,6 +59,7 @@ class TloggCfg:
     def load():
         colorsPath   = os.path.join(TloggCfg.pathCfg,'colors.yaml')
         filtersPath  = os.path.join(TloggCfg.pathCfg,'filters.yaml')
+        optionsPath  = os.path.join(TloggCfg.pathCfg,'options.yaml')
         searchesPath = os.path.join(TloggCfg.pathCfg,'searches.yaml')
         if os.path.exists(colorsPath):
             with open(colorsPath) as f:
@@ -61,6 +67,9 @@ class TloggCfg:
         if os.path.exists(filtersPath):
             with open(filtersPath) as f:
                 TloggCfg.filters = yaml.load(f, Loader=yaml.SafeLoader)
+        if os.path.exists(optionsPath):
+            with open(optionsPath) as f:
+                TloggCfg.options = yaml.load(f, Loader=yaml.SafeLoader)
         if os.path.exists(searchesPath):
             with open(searchesPath) as f:
                 TloggCfg.searches = yaml.load(f, Loader=yaml.SafeLoader)
