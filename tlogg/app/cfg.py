@@ -28,6 +28,7 @@ import yaml
 class TloggCfg:
     version="__VERSION__"
     name="__NAME__"
+    cfgVersion = '1.0'
     pathCfg="."
     colors=[]
     filters=[]
@@ -42,18 +43,18 @@ class TloggCfg:
         filtersPath  = os.path.join(TloggCfg.pathCfg,'filters.yaml')
         optionsPath  = os.path.join(TloggCfg.pathCfg,'options.yaml')
         searchesPath = os.path.join(TloggCfg.pathCfg,'searches.yaml')
-        if colors:
-            with open(colorsPath, 'w') as f:
-                yaml.dump(TloggCfg.colors, f, sort_keys=False, default_flow_style=False)
-        if filters:
-            with open(filtersPath, 'w') as f:
-                yaml.dump(TloggCfg.filters, f, sort_keys=False, default_flow_style=False)
-        if options:
-            with open(optionsPath, 'w') as f:
-                yaml.dump(TloggCfg.options, f, sort_keys=False, default_flow_style=False)
-        if searches:
-            with open(searchesPath, 'w') as f:
-                yaml.dump(TloggCfg.searches, f, sort_keys=False, default_flow_style=False)
+
+        def writeCfg(path, cfg):
+            fullCfg = {
+                'version':TloggCfg.cfgVersion,
+                'cfg':cfg }
+            with open(path, 'w') as f:
+                yaml.dump(fullCfg, f, sort_keys=False, default_flow_style=False)
+
+        if colors:   writeCfg(colorsPath,   TloggCfg.colors)
+        if filters:  writeCfg(filtersPath,  TloggCfg.filters)
+        if options:  writeCfg(optionsPath,  TloggCfg.options)
+        if searches: writeCfg(searchesPath, TloggCfg.searches)
 
     @staticmethod
     def load():
@@ -61,15 +62,16 @@ class TloggCfg:
         filtersPath  = os.path.join(TloggCfg.pathCfg,'filters.yaml')
         optionsPath  = os.path.join(TloggCfg.pathCfg,'options.yaml')
         searchesPath = os.path.join(TloggCfg.pathCfg,'searches.yaml')
+
         if os.path.exists(colorsPath):
             with open(colorsPath) as f:
-                TloggCfg.colors = yaml.load(f, Loader=yaml.SafeLoader)
+                TloggCfg.colors = yaml.load(f, Loader=yaml.SafeLoader)['cfg']
         if os.path.exists(filtersPath):
             with open(filtersPath) as f:
-                TloggCfg.filters = yaml.load(f, Loader=yaml.SafeLoader)
+                TloggCfg.filters = yaml.load(f, Loader=yaml.SafeLoader)['cfg']
         if os.path.exists(optionsPath):
             with open(optionsPath) as f:
-                TloggCfg.options = yaml.load(f, Loader=yaml.SafeLoader)
+                TloggCfg.options = yaml.load(f, Loader=yaml.SafeLoader)['cfg']
         if os.path.exists(searchesPath):
             with open(searchesPath) as f:
-                TloggCfg.searches = yaml.load(f, Loader=yaml.SafeLoader)
+                TloggCfg.searches = yaml.load(f, Loader=yaml.SafeLoader)['cfg']

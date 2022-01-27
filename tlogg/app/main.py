@@ -45,6 +45,7 @@ from .about import *
 from .fileviewer  import *
 from .options import optionsFormLayout, optionsLoadTheme
 from .highlighters import highlightersFormLayout
+from .predefinedfilters import PredefinedFiltersFormWindow, PredefinedFilters
 
 def main():
     TloggCfg.pathCfg = appdirs.user_config_dir("tlogg")
@@ -109,7 +110,7 @@ def main():
 
     def openFile(file):
         tabSplitter = TTkSplitter(orientation=TTkK.VERTICAL)
-        tab.addTab(tabSplitter, file)
+        tab.addTab(tabSplitter, os.path.basename(file))
         tab.setCurrentWidget(tabSplitter)
         topFrame    = TTkFrame(parent=tabSplitter, border=False, layout=TTkVBoxLayout())
         bottomFrame = TTkFrame(parent=tabSplitter, border=False, layout=TTkVBoxLayout())
@@ -117,18 +118,18 @@ def main():
 
         # Define the bottom layout widgets
         bottomLayoutSearch = TTkHBoxLayout()
-        bls_label_1  = TTkLabel(text=" Text:", maxWidth=6)
-        bls_label_2  = TTkLabel(text="Ignore case:", maxWidth=12)
-        bls_cb_icase = TTkCheckbox(maxWidth=3, checked=True)
-        bls_search   = TTkButton(text="Search", maxWidth=10)
-        bls_searchbox  = TTkComboBox(editable=True)
+        btn_filters   = TTkButton(text="Filters ^", maxWidth=11)
+        bls_label_1   = TTkLabel(text=" Txt:", maxWidth=5)
+        bls_cb_icase  = TTkCheckbox(text="Aa", maxWidth=5, checked=True)
+        bls_search    = TTkButton(text="Search", maxWidth=10)
+        bls_searchbox = TTkComboBox(editable=True)
         bls_searchbox.addItems(TloggCfg.searches)
         bls_searchbox.setCurrentIndex(0)
 
-        bottomLayoutSearch.addWidget(bls_label_2)
-        bottomLayoutSearch.addWidget(bls_cb_icase)
+        bottomLayoutSearch.addWidget(btn_filters)
         bottomLayoutSearch.addWidget(bls_label_1)
         bottomLayoutSearch.addWidget(bls_searchbox)
+        bottomLayoutSearch.addWidget(bls_cb_icase)
         bottomLayoutSearch.addWidget(bls_search)
 
         bottomFrame.layout().addItem(bottomLayoutSearch)
@@ -182,6 +183,10 @@ def main():
         bls_search.clicked.connect(_makeSearch())
         bls_searchbox.editTextChanged.connect(_makeSearch())
 
+        def _openPredefinedFilters():
+            TTkHelper.overlay(btn_filters, PredefinedFilters(bls_searchbox), -2, 1)
+        btn_filters.clicked.connect(_openPredefinedFilters)
+
     for file in args.filename:
         openFile(file)
 
@@ -196,11 +201,16 @@ def main():
         TTkHelper.overlay(tab, filePicker, 2, 1)
     buttonOpen.menuButtonClicked.connect(openFileCallback)
 
-    def showFilters(btn):
+    def showColors(btn):
         win = TTkWindow(title="Highlighters...", size=(70,20), border=True)
         win.setLayout(highlightersFormLayout(win))
         TTkHelper.overlay(buttonColors, win, 0,0)
-    buttonColors.menuButtonClicked.connect(showFilters)
+    buttonColors.menuButtonClicked.connect(showColors)
+
+    def showFilters(btn):
+        win = PredefinedFiltersFormWindow(title="Predefined Filters...", size=(70,20), border=True)
+        TTkHelper.overlay(buttonColors, win, 0,0)
+    buttonFilters.menuButtonClicked.connect(showFilters)
 
     def showOptions(btn):
         win = TTkWindow(title="Options...", size=(70,20), border=True)
