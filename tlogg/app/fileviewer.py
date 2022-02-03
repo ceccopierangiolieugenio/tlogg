@@ -199,10 +199,29 @@ class FileViewerSearch(FileViewer):
         self.update()
 
     def searchedIndexes(self, indexes):
+        # Get the current lineSelected to be used to scroll
+        # the search viewer to the similar to previous position
+        lineSelected = -1
+        if self._selected > -1:
+            lineSelected = self._indexes[self._selected]
+
         self._indexesSearched = indexes
         self._indexes = [i for i in sorted(set(self._indexesSearched+self._indexesMark))]
         ox,_ = self.getViewOffsets()
-        self.viewMoveTo(ox, 0)
+
+        lineToMove = 0
+        if lineSelected > -1:
+            for i, lineNum in enumerate(self._indexes):
+                if lineNum >= lineSelected:
+                   if lineNum == lineSelected:
+                       self._selected = i
+                   else:
+                       self._selected = -1
+                   # Try to keep the  selected area at the center of the widget
+                   lineToMove = i if i <= self.height()/2 else int(i-self.height()/2)
+                   break
+
+        self.viewMoveTo(ox, lineToMove)
         self.update()
 
     def viewFullAreaSize(self) -> (int, int):
