@@ -85,7 +85,7 @@ def main():
         TloggCfg.options['theme'] = 'UTF8'
     optionsLoadTheme(TloggCfg.options['theme'])
 
-    root = TTk(layout=TTkGridLayout())
+    root = TTk(layout=TTkGridLayout(), title="tlogg")
     mainSplitter    = TTkSplitter(parent=root, orientation=TTkK.VERTICAL)
     fileTabSplitter = TTkSplitter(parent=mainSplitter, orientation=TTkK.HORIZONTAL)
     fileTree = TTkFileTree(parent=fileTabSplitter, path=".")
