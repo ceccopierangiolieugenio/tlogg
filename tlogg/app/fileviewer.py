@@ -22,12 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
-import re
-import sys
-import argparse
-from tkinter import UNDERLINE
-
 from TermTk import *
 
 from TermTk import TTkK
