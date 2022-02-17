@@ -43,6 +43,7 @@ from .cfg  import *
 from .glbl import *
 from .about import *
 from .fileviewer  import *
+from .filetree import FileTree
 from .options import optionsFormLayout, optionsLoadTheme
 from .highlighters import highlightersFormLayout
 from .predefinedfilters import PredefinedFiltersFormWindow, PredefinedFilters
@@ -65,21 +66,21 @@ def main():
     TloggCfg.load()
 
     '''
-        ┌─────────────────[Main Splitter]─────────┐
-        │┌─────────╥────[File Tab Splitter]──────┐│
-        ││ File    ║       Tab                   ││
-        ││ Tree    ╟─────────────────────────────┤│
-        ││         ║┌───────────────────────────┐││
-        ││         ║│   File Viewer             │││
-        ││         ║│                           │││
-        ││         ║╞═══════════════════════════╡││
-        ││         ║│   Search Widget           │││
-        ││         ║│                           │││
-        ││         ║└───────────────────────────┘││
-        │└─────────╨─────────────────────────────┘│
-        ╞═════════════════════════════════════════╡
-        │ Logger,Debug View                       │
-        └─────────────────────────────────────────┘
+        ┌──────────────────[Main Splitter]─────────┐
+        │┌──────────╥────[File Tab Splitter]──────┐│
+        ││ F.Tree   ║       Tab                   ││
+        ││ Controls ╟─────────────────────────────┤│
+        │├──────────╢┌───────────────────────────┐││
+        ││ File     ║│   File Viewer             │││
+        ││ Tree     ║│                           │││
+        ││          ║╞═══════════════════════════╡││
+        ││          ║│   Search Widget           │││
+        ││          ║│                           │││
+        ││          ║└───────────────────────────┘││
+        │└──────────╨─────────────────────────────┘│
+        ╞══════════════════════════════════════════╡
+        │ Logger,Debug View                        │
+        └──────────────────────────────────────────┘
     '''
     if 'theme' not in TloggCfg.options:
         TloggCfg.options['theme'] = 'UTF8'
@@ -88,7 +89,7 @@ def main():
     root = TTk(layout=TTkGridLayout(), title="tlogg")
     mainSplitter    = TTkSplitter(parent=root, orientation=TTkK.VERTICAL)
     fileTabSplitter = TTkSplitter(parent=mainSplitter, orientation=TTkK.HORIZONTAL)
-    fileTree = TTkFileTree(parent=fileTabSplitter, path=".")
+    fileTree = FileTree(parent=fileTabSplitter)
     tab      = TTkTabWidget(parent=fileTabSplitter, border=False)
     fileTabSplitter.setSizes([20,100])
     # tab = TTkTabWidget(parent=fileTabSplitter, border=True)
@@ -108,7 +109,15 @@ def main():
     buttonExit    = fileMenu.addMenu("Exit")
     buttonExit.menuButtonClicked.connect(lambda _: root.quit())
 
+    openedFiles = []
+
+    def _tabChanged(index):
+        fileTree.follow(openedFiles[index])
+
+    tab.currentChanged.connect(_tabChanged)
+
     def openFile(file):
+        openedFiles.append(file)
         tabSplitter = TTkSplitter(orientation=TTkK.VERTICAL)
         tab.addTab(tabSplitter, os.path.basename(file))
         tab.setCurrentWidget(tabSplitter)
