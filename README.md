@@ -6,7 +6,7 @@
 [![pypi_version](https://img.shields.io/twitter/follow/Pier95886803?style=social&logo=twitter)](https://twitter.com/hashtag/pyTermTk?src=hashtag_click&f=live)
 
 # tlogg
-A fast, advanced [text-based](https://en.wikipedia.org/wiki/Text-based_user_interface) log explorer inspired by [glogg - the fast, smart log explorer](https://github.com/nickbnf/glogg)
+A fast, advanced [text-based](https://en.wikipedia.org/wiki/Text-based_user_interface) log explorer inspired by [glogg - the fast, smart log explorer](https://github.com/nickbnf/glogg) and [klogg - Faster log explorer](https://klogg.filimonov.dev)(fork of glogg)
 
 [![screenshot](https://raw.githubusercontent.com/ceccopierangiolieugenio/binaryRepo/master/tlogg/screenshot.003.png)](https://pypi.org/project/tlogg)
 ## Features
@@ -14,6 +14,8 @@ A fast, advanced [text-based](https://en.wikipedia.org/wiki/Text-based_user_inte
 - Highlight
 - Bookmarks
 - Shiny ASCII Red Peppers
+
+[![screenshot](https://raw.githubusercontent.com/ceccopierangiolieugenio/binaryRepo/master/tlogg/demo.001.gif)](https://pypi.org/project/tlogg)
 
 # Install from [pypi](https://pypi.org/project/tlogg)
 ```bash
