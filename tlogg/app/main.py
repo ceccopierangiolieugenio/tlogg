@@ -96,7 +96,7 @@ def main():
     mainSplitter.addWidget(TTkLogViewer(),3)
 
 
-    fileMenu = tab.addMenu("[&File]")
+    fileMenu = tab.addMenu("&File")
     buttonOpen    = fileMenu.addMenu("Open")
     buttonClose   = fileMenu.addMenu("Close")
     fileMenu.addSpacer()
@@ -207,24 +207,24 @@ def main():
                         caption="Open a File", path=".",
                         filter="All Files (*);;Text Files (*.txt);;Log Files (*.log)")
         filePicker.filePicked.connect(openFile)
-        TTkHelper.overlay(tab, filePicker, 2, 1)
+        TTkHelper.overlay(tab, filePicker, 2, 1, modal=True)
     buttonOpen.menuButtonClicked.connect(openFileCallback)
 
     def showColors(btn):
         win = TTkWindow(title="Highlighters...", size=(70,20), border=True)
         win.setLayout(highlightersFormLayout(win))
-        TTkHelper.overlay(buttonColors, win, 0,0)
+        TTkHelper.overlay(buttonColors, win, 0,0, modal=True)
     buttonColors.menuButtonClicked.connect(showColors)
 
     def showFilters(btn):
         win = PredefinedFiltersFormWindow(title="Predefined Filters...", size=(70,20), border=True)
-        TTkHelper.overlay(buttonColors, win, 0,0)
+        TTkHelper.overlay(buttonColors, win, 0,0, modal=True)
     buttonFilters.menuButtonClicked.connect(showFilters)
 
     def showOptions(btn):
         win = TTkWindow(title="Options...", size=(70,20), border=True)
         win.setLayout(optionsFormLayout(win))
-        TTkHelper.overlay(buttonOptions, win, 0,0)
+        TTkHelper.overlay(buttonOptions, win, 0,0, modal=True)
     buttonOptions.menuButtonClicked.connect(showOptions )
 
     def showAbout(btn):

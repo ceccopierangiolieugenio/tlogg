@@ -132,7 +132,7 @@ class FileViewer(TTkAbstractScrollView):
         ox,oy = self.getViewOffsets()
         bufferLen = self.getLen()
         for i in range(min(self.height(),bufferLen-oy)):
-            line = TTkString() + self.getLine(i+oy).replace('\t','    ').replace('\n','')
+            line = TTkString(self.getLine(i+oy).replace('\n','')).tab2spaces()
             lineNum = self.getLineNum(i+oy)
             if lineNum in self._indexesMark:
                 symbolcolor = TTkColor.fg("#00ffff")
