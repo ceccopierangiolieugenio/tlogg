@@ -34,7 +34,6 @@ from TermTk import *
 from TermTk import TTk, TTkK, TTkLog, TTkColor, TTkTheme
 from TermTk import pyTTkSlot, pyTTkSignal
 from TermTk import TTkFrame
-from TermTk import TColor, TText
 from TermTk import TTkAbstractScrollArea, TTkAbstractScrollView
 from TermTk import TTkFileDialogPicker
 from TermTk import TTkFileTree
@@ -168,7 +167,7 @@ def main():
             bwp = bottomViewport
             twp = topViewport
             def _search(_=None):
-                searchtext = sb.currentText()
+                searchtext = str(sb.currentText())
                 TTkLog.debug(f"{searchtext=}")
                 indexes = fb.searchRe(searchtext, ignoreCase=cb.checkState() == TTkK.Checked)
                 bwp.searchedIndexes(indexes)

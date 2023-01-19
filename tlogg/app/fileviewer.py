@@ -31,8 +31,6 @@ from TermTk import TTkString
 from TermTk import TTk
 from TermTk import TTkFileBuffer
 from TermTk import TTkFrame
-from TermTk import TColor
-from TermTk import TText
 from TermTk import pyTTkSlot, pyTTkSignal
 from TermTk import TTkAbstractScrollArea
 from TermTk import TTkAbstractScrollView
