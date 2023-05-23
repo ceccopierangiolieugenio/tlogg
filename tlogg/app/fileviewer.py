@@ -126,7 +126,7 @@ class FileViewer(TTkAbstractScrollView):
     def getLineNum(self, num) -> int:
         return num
 
-    def paintEvent(self):
+    def paintEvent(self, canvas):
         ox,oy = self.getViewOffsets()
         bufferLen = self.getLen()
         for i in range(min(self.height(),bufferLen-oy)):
@@ -170,11 +170,11 @@ class FileViewer(TTkAbstractScrollView):
             lineNumber = TTkString() + numberColor + str(lineNum).rjust(lenLineNumber) + TTkColor.RST + ' '
             # Compose print line
             printLine = TTkString() + symbolcolor + symbol + TTkColor.RST + ' ' + lineNumber + line.substring(ox)
-            self.getCanvas().drawText(pos=(0,i), text=printLine, color=selectedColor, width=self.width(), )
+            canvas.drawText(pos=(0,i), text=printLine, color=selectedColor, width=self.width(), )
 
         # Draw the loading banner
         if self._indexing is not None:
-            self.getCanvas().drawText(pos=(0,0), text=f" [ Indexed: {int(100*self._indexing)}% ] ")
+            canvas.drawText(pos=(0,0), text=f" [ Indexed: {int(100*self._indexing)}% ] ")
 
 class FileViewerSearch(FileViewer):
     __slots__ = ('_indexes')

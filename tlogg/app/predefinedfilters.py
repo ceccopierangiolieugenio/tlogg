@@ -157,21 +157,21 @@ class PredefinedFilters(TTkResizableFrame):
                     if state == TTkK.Checked:
                         if not txt:
                             txt = p
-                        elif p not in txt:
+                        elif txt.find(p) == -1:
                             txt += '|'+p
                     else:
                         p1 = f"|{p}"
                         p2 = f"{p}|"
-                        if p1 in txt:
+                        if txt.find(p1) != -1:
                             txt = txt.replace(p1,'')
-                        elif p2 in txt:
+                        elif txt.find(p2) != -1:
                             txt = txt.replace(p2,'')
                         else:
                             txt = txt.replace(p,'')
                     sb.setCurrentText(txt)
                 return _ret
 
-            layout.addWidget(cb := TTkCheckbox(text=filter['name'],checked=filter['pattern'] in searchbox.currentText()))
+            layout.addWidget(cb := TTkCheckbox(text=filter['name'],checked=searchbox.currentText().find(filter['pattern'])!=-1))
             cb.stateChanged.connect(_cb(filter['pattern'], searchbox))
         w,h = self.minimumSize()
         self.resize(w,h)
