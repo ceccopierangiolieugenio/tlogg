@@ -88,14 +88,21 @@ def main():
     root = TTk(layout=TTkGridLayout(), title="tlogg")
     mainSplitter    = TTkSplitter(parent=root, orientation=TTkK.VERTICAL)
     fileTabSplitter = TTkSplitter(parent=mainSplitter, orientation=TTkK.HORIZONTAL)
-    fileTree = FileTree(parent=fileTabSplitter)
-    tab      = TTkTabWidget(parent=fileTabSplitter, border=False)
+    leftFileControlLayout = TTkVBoxLayout()
+    fileTabSplitter.addItem(leftFileControlLayout)
+
+    menuFrame = TTkFrame(border=False, maxHeight=1)
+    leftFileControlLayout.addWidget(menuFrame)
+
+    fileTree = FileTree()
+    leftFileControlLayout.addWidget(fileTree)
+
+    kodeTab      = TTkKodeTab(parent=fileTabSplitter, border=False, closable=True)
     fileTabSplitter.setSizes([20,100])
-    # tab = TTkTabWidget(parent=fileTabSplitter, border=True)
     mainSplitter.addWidget(TTkLogViewer(),3)
 
 
-    fileMenu = tab.addMenu("&File")
+    fileMenu = menuFrame.menubarTop().addMenu("&File")
     buttonOpen    = fileMenu.addMenu("Open")
     buttonClose   = fileMenu.addMenu("Close")
     fileMenu.addSpacer()
@@ -103,23 +110,31 @@ def main():
     buttonFilters = fileMenu.addMenu("&Filters...")
     buttonOptions = fileMenu.addMenu("&Options...")
     fileMenu.addSpacer()
-    buttonAbout = fileMenu.addMenu("&About...")
-    fileMenu.addSpacer()
     buttonExit    = fileMenu.addMenu("Exit")
     buttonExit.menuButtonClicked.connect(lambda _: root.quit())
 
-    openedFiles = []
+    def _showAbout(btn):
+        TTkHelper.overlay(buttonColors, TTkAbout(), 20,5)
 
-    def _tabChanged(index):
-        fileTree.follow(openedFiles[index])
+    def _showAboutTlogg(btn):
+        TTkHelper.overlay(buttonColors, About(), 20,5)
 
-    tab.currentChanged.connect(_tabChanged)
+    helpMenu = menuFrame.menubarTop().addMenu("&Help", alignment=TTkK.RIGHT_ALIGN)
+    helpMenu.addMenu("About ...").menuButtonClicked.connect(_showAbout)
+    helpMenu.addMenu("About tlogg").menuButtonClicked.connect(_showAboutTlogg)
+
+    # openedFiles = []
+
+    def _tabChanged(_,__,___,data):
+        fileTree.follow(data)
+
+    kodeTab.currentChanged.connect(_tabChanged)
 
     def openFile(file):
-        openedFiles.append(file)
+        # openedFiles.append(file)
         tabSplitter = TTkSplitter(orientation=TTkK.VERTICAL)
-        tab.addTab(tabSplitter, os.path.basename(file))
-        tab.setCurrentWidget(tabSplitter)
+        kodeTab.addTab(tabSplitter, os.path.basename(file))
+        kodeTab.setCurrentWidget(tabSplitter)
         topFrame    = TTkFrame(parent=tabSplitter, border=False, layout=TTkVBoxLayout())
         bottomFrame = TTkFrame(parent=tabSplitter, border=False, layout=TTkVBoxLayout())
 
@@ -206,7 +221,7 @@ def main():
                         caption="Open a File", path=".",
                         filter="All Files (*);;Text Files (*.txt);;Log Files (*.log)")
         filePicker.filePicked.connect(openFile)
-        TTkHelper.overlay(tab, filePicker, 2, 1, modal=True)
+        TTkHelper.overlay(kodeTab, filePicker, 2, 1, modal=True)
     buttonOpen.menuButtonClicked.connect(openFileCallback)
 
     def showColors(btn):
@@ -225,10 +240,6 @@ def main():
         win.setLayout(optionsFormLayout(win))
         TTkHelper.overlay(buttonOptions, win, 0,0, modal=True)
     buttonOptions.menuButtonClicked.connect(showOptions )
-
-    def showAbout(btn):
-        TTkHelper.overlay(buttonColors, About(), 0,0)
-    buttonAbout.menuButtonClicked.connect(showAbout)
 
     # tab.addTab(highlightersForm(), "-Setup-")
 

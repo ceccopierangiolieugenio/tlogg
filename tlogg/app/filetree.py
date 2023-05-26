@@ -48,7 +48,7 @@ class FileTree(TTkWidget):
         self._controlsLayout = TTkHBoxLayout()
         self.layout().addItem(self._controlsLayout)
 
-        self._ftCbFollow = TTkCheckbox(text="Follow", maxWidth=9, checked=True)
+        self._ftCbFollow = TTkCheckbox(text="Follow", maxWidth=9, checked=False)
         self._ftBtnPrev  = TTkButton(text="<",maxWidth=3, enabled=False)
         self._ftBtnNext  = TTkButton(text=">",maxWidth=3, enabled=False)
         self._ftBtnUp    = TTkButton(text="^",maxWidth=3, enabled=True)
