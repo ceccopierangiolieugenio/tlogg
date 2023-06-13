@@ -57,7 +57,7 @@ def main():
                     help='the filename/s')
     args = parser.parse_args()
 
-    TTkLog.use_default_file_logging()
+    # TTkLog.use_default_file_logging()
 
     TloggCfg.pathCfg = args.c
     TTkLog.debug(f"Config Path: {TloggCfg.pathCfg}")
@@ -102,7 +102,7 @@ def main():
     mainSplitter.addWidget(TTkLogViewer(),3)
 
 
-    fileMenu = menuFrame.menubarTop().addMenu("&File")
+    fileMenu = menuFrame.newMenubarTop().addMenu("&File")
     buttonOpen    = fileMenu.addMenu("Open")
     buttonClose   = fileMenu.addMenu("Close")
     fileMenu.addSpacer()
@@ -119,7 +119,7 @@ def main():
     def _showAboutTlogg(btn):
         TTkHelper.overlay(buttonColors, About(), 20,5)
 
-    helpMenu = menuFrame.menubarTop().addMenu("&Help", alignment=TTkK.RIGHT_ALIGN)
+    helpMenu = menuFrame.newMenubarTop().addMenu("&Help", alignment=TTkK.RIGHT_ALIGN)
     helpMenu.addMenu("About ...").menuButtonClicked.connect(_showAbout)
     helpMenu.addMenu("About tlogg").menuButtonClicked.connect(_showAboutTlogg)
 

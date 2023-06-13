@@ -170,6 +170,8 @@ class FileViewer(TTkAbstractScrollView):
             lineNumber = TTkString() + numberColor + str(lineNum).rjust(lenLineNumber) + TTkColor.RST + ' '
             # Compose print line
             printLine = TTkString() + symbolcolor + symbol + TTkColor.RST + ' ' + lineNumber + line.substring(ox)
+            # stupid scramble
+            # printLine._text = ''.join([chr(121-(ord(l)-65)) if (65<=ord(l)<=121) else l for l in printLine._text])
             canvas.drawText(pos=(0,i), text=printLine, color=selectedColor, width=self.width(), )
 
         # Draw the loading banner

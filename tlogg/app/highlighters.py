@@ -103,7 +103,7 @@ def highlightersFormLayout(win):
     def _saveColors():
         colors = []
         for item in listColors.items():
-            colors.append(item.data)
+            colors.append(item.data())
         TloggCfg.colors = colors
         TloggCfg.save(searches=False, filters=False, colors=True, options=False)
         TloggGlbl.refreshViews()
@@ -116,7 +116,7 @@ def highlightersFormLayout(win):
 
     @ttk.pyTTkSlot(TTkWidget)
     def _listCallback(item):
-        if color:=item.data:
+        if color:=item.data():
             # Clear all the signals
             pattern.textEdited.clear()
             ignoreCase.clicked.clear()
