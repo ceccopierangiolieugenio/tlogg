@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # MIT License
 #
 # Copyright (c) 2021 Eugenio Parodi <ceccopierangiolieugenio AT googlemail DOT com>
@@ -22,24 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from TermTk import *
+import TermTk as ttk
 
-from TermTk import TTkK
-from TermTk import TTkLog
-from TermTk import TTkColor
-from TermTk import TTkString
-from TermTk import TTk
-from TermTk import TTkFileBuffer
-from TermTk import TTkFrame
-from TermTk import pyTTkSlot, pyTTkSignal
-from TermTk import TTkAbstractScrollArea
-from TermTk import TTkAbstractScrollView
+from tlogg import FileViewerProxy
 
 from . import TloggCfg
 
-class FileViewer(TTkAbstractScrollView):
+class FileViewer(ttk.TTkAbstractScrollView):
     __slots__ = (
         '_fileBuffer', '_indexesMark', '_indexesSearched', '_selected', '_indexing', '_searchRe',
+        '_fileViewerProxy',
         # Signals
         'selected', 'marked')
     def __init__(self, *args, **kwargs):
@@ -49,25 +39,24 @@ class FileViewer(TTkAbstractScrollView):
         self._selected = -1
         self._searchRe = ""
         # Signals
-        self.selected = pyTTkSignal(int)
-        self.marked = pyTTkSignal(list)
-        TTkAbstractScrollView.__init__(self, *args, **kwargs)
-        self._name = kwargs.get('name' , 'FileViewer' )
+        self.selected = ttk.pyTTkSignal(int)
+        self.marked = ttk.pyTTkSignal(list)
         self._fileBuffer = kwargs.get('filebuffer')
+        self._fileViewerProxy = FileViewerProxy(fileName = self._fileBuffer.filename())
+        super().__init__(*args, **kwargs)
         self.viewChanged.connect(self._viewChangedHandler)
-        self.setFocusPolicy(TTkK.ClickFocus)
+        self.setFocusPolicy(ttk.TTkK.ClickFocus)
 
-
-    @pyTTkSlot()
+    @ttk.pyTTkSlot()
     def _viewChangedHandler(self):
         self.update()
 
-    @pyTTkSlot(float)
+    @ttk.pyTTkSlot(float)
     def fileIndexing(self, percentage):
         self._indexing = percentage
         self.viewChanged.emit()
 
-    @pyTTkSlot()
+    @ttk.pyTTkSlot()
     def fileIndexed(self):
         self._indexing = None
         self.viewChanged.emit()
@@ -110,7 +99,7 @@ class FileViewer(TTkAbstractScrollView):
             return True
         return False
 
-    @pyTTkSlot(int)
+    @ttk.pyTTkSlot(int)
     def selectAndMove(self, line):
         self._selected = line
         ox,_ = self.getViewOffsets()
@@ -130,34 +119,34 @@ class FileViewer(TTkAbstractScrollView):
         ox,oy = self.getViewOffsets()
         bufferLen = self.getLen()
         for i in range(min(self.height(),bufferLen-oy)):
-            line = TTkString(self.getLine(i+oy).replace('\n','')).tab2spaces()
+            line = ttk.TTkString(self.getLine(i+oy).replace('\n','')).tab2spaces()
             lineNum = self.getLineNum(i+oy)
             if lineNum in self._indexesMark:
-                symbolcolor = TTkColor.fg("#00ffff")
-                numberColor = TTkColor.bg("#444444")
+                symbolcolor = ttk.TTkColor.fg("#00ffff")
+                numberColor = ttk.TTkColor.bg("#444444")
                 symbol='❥'
             elif lineNum in self._indexesSearched:
-                symbolcolor = TTkColor.fg("#ff0000")
-                numberColor = TTkColor.bg("#444444")
+                symbolcolor = ttk.TTkColor.fg("#ff0000")
+                numberColor = ttk.TTkColor.bg("#444444")
                 symbol='●'
             else:
-                symbolcolor = TTkColor.fg("#0000ff")
-                numberColor = TTkColor.bg("#444444")
+                symbolcolor = ttk.TTkColor.fg("#0000ff")
+                numberColor = ttk.TTkColor.bg("#444444")
                 symbol='○'
 
             if i+oy == self._selected:
-                selectedColor = TTkColor.bg("#008844")
-                searchedColor = TTkColor.fg("#FFFF00")+TTkColor.bg("#004400")
+                selectedColor = ttk.TTkColor.bg("#008844")
+                searchedColor = ttk.TTkColor.fg("#FFFF00")+ttk.TTkColor.bg("#004400")
                 line = line.setColor(selectedColor)
             else:
-                selectedColor = TTkColor.RST
-                searchedColor = TTkColor.fg("#000000")+TTkColor.bg("#AAAAAA")
+                selectedColor = ttk.TTkColor.RST
+                searchedColor = ttk.TTkColor.fg("#000000")+ttk.TTkColor.bg("#AAAAAA")
                 # Check in the filters a matching color
                 for color in TloggCfg.colors:
                     #TTkLog.debug(f"{color['pattern']} - {line}")
-                    if m := line.findall(regexp=color['pattern']):
-                        selectedColor = TTkColor.fg(color['fg'])+TTkColor.bg(color['bg'])
-                        searchedColor = TTkColor.fg(color['bg'])+TTkColor.bg(color['fg'])
+                    if m := line.findall(regexp=color['pattern'], ignoreCase=color['ignorecase']):
+                        selectedColor = ttk.TTkColor.fg(color['fg'])+ttk.TTkColor.bg(color['bg'])
+                        searchedColor = ttk.TTkColor.fg(color['bg'])+ttk.TTkColor.bg(color['fg'])
                         line = line.setColor(selectedColor)
                         break
             if self._searchRe:
@@ -167,9 +156,9 @@ class FileViewer(TTkAbstractScrollView):
 
             # Add Line Number
             lenLineNumber = len(str(self.getLineNum(bufferLen-1)))
-            lineNumber = TTkString() + numberColor + str(lineNum).rjust(lenLineNumber) + TTkColor.RST + ' '
+            lineNumber = ttk.TTkString() + numberColor + str(lineNum).rjust(lenLineNumber) + ttk.TTkColor.RST + ' '
             # Compose print line
-            printLine = TTkString() + symbolcolor + symbol + TTkColor.RST + ' ' + lineNumber + line.substring(ox)
+            printLine = ttk.TTkString() + symbolcolor + symbol + ttk.TTkColor.RST + ' ' + lineNumber + line.substring(ox)
             # stupid scramble
             # printLine._text = ''.join([chr(121-(ord(l)-65)) if (65<=ord(l)<=121) else l for l in printLine._text])
             canvas.drawText(pos=(0,i), text=printLine, color=selectedColor, width=self.width(), )
@@ -256,12 +245,12 @@ class FileViewerSearch(FileViewer):
     def getLineNum(self, num) -> int:
         return self._indexes[num]
 
-class FileViewerArea(TTkAbstractScrollArea):
+class FileViewerArea(ttk.TTkAbstractScrollArea):
     __slots__ = ('_fileView')
     def __init__(self, *args, **kwargs):
-        TTkAbstractScrollArea.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._name = kwargs.get('name' , 'FileViewer' )
         if 'parent' in kwargs: kwargs.pop('parent')
         self._fileView = kwargs.get('fileView')
-        self.setFocusPolicy(TTkK.ClickFocus)
+        self.setFocusPolicy(ttk.TTkK.ClickFocus)
         self.setViewport(self._fileView)

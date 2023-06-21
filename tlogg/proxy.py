@@ -1,6 +1,6 @@
 # MIT License
 #
-# Copyright (c) 2021 Eugenio Parodi <ceccopierangiolieugenio AT googlemail DOT com>
+# Copyright (c) 2023 Eugenio Parodi <ceccopierangiolieugenio AT googlemail DOT com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,6 +20,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .plugin import TloggPlugin
-from .proxy import tloggProxy, FileViewerProxy
-from .helper import *
+import TermTk as ttk
+
+class FileViewerProxy():
+    __slots__ = ('_fileName')
+    def __init__(self, fileName) -> None:
+        self._fileName = fileName
+
+    def fileName(self):
+        return self._fileName
+
+class TloggProxy():
+    __slots__ = ('_openFileCb',
+                 # Signals
+                 'tloggFocussed')
+    def __init__(self) -> None:
+        self._openFileCb = lambda _ : None
+        self.tloggFocussed = ttk.pyTTkSignal(FileViewerProxy)
+
+    def setOpenFile(self, cb):
+        self._openFileCb = cb
+
+    def openFile(self, fileName):
+        return self._openFileCb(fileName)
+
+tloggProxy = TloggProxy()

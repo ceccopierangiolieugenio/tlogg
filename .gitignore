@@ -12,6 +12,7 @@ profiler.txt
 docs/html
 TermTk
 config
+LOGS
 
 # C extensions
 *.so
