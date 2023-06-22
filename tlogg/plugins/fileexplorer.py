@@ -68,7 +68,10 @@ class FileTree(ttk.TTkWidget):
         # Forward Functions
         self._fileTree.fileActivated.connect(lambda x: tlogg.tloggProxy.openFile(x.path()))
 
-    def follow(self, path):
+        tlogg.tloggProxy.tloggFocussed.connect(self.follow)
+
+    @ttk.pyTTkSlot(tlogg.TloggViewerProxy, str)
+    def follow(self, _, path):
         if self._ftCbFollow.checkState() == ttk.TTkK.Checked:
             if os.path.isfile(path):
                 path, _ = os.path.split(path)

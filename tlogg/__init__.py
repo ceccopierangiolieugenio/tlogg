@@ -21,5 +21,5 @@
 # SOFTWARE.
 
 from .plugin import TloggPlugin
-from .proxy import tloggProxy, FileViewerProxy
+from .proxy import tloggProxy, TloggViewerProxy
 from .helper import *

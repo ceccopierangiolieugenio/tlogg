@@ -22,7 +22,7 @@
 
 import TermTk as ttk
 
-class FileViewerProxy():
+class TloggViewerProxy():
     __slots__ = ('_fileName')
     def __init__(self, fileName) -> None:
         self._fileName = fileName
@@ -36,7 +36,7 @@ class TloggProxy():
                  'tloggFocussed')
     def __init__(self) -> None:
         self._openFileCb = lambda _ : None
-        self.tloggFocussed = ttk.pyTTkSignal(FileViewerProxy)
+        self.tloggFocussed = ttk.pyTTkSignal(TloggViewerProxy, str)
 
     def setOpenFile(self, cb):
         self._openFileCb = cb

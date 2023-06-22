@@ -91,10 +91,10 @@ class TLOGG(TTkGridLayout):
         helpMenu.addMenu("About ...").menuButtonClicked.connect(self.showAbout)
         helpMenu.addMenu("About tlogg").menuButtonClicked.connect(self.showAboutTlogg)
 
-        # def _tabChanged(_,__,___,data):
-        #     fileTree.follow(data)
+        def _tabChanged(_,__,widget,data):
+            tloggProxy.tloggFocussed.emit(None, data)
 
-        # self._kodeTab.currentChanged.connect(_tabChanged)
+        self._kodeTab.currentChanged.connect(_tabChanged)
 
         # fileTree.fileActivated.connect(lambda x: self.openFile(x.path()))
 
@@ -180,7 +180,7 @@ class TLOGG(TTkGridLayout):
     def openFile(self, file):
         # openedFiles.append(file)
         loggWidget = LoggWidget(file)
-        self._kodeTab.addTab(loggWidget, os.path.basename(file))
+        self._kodeTab.addTab(widget=loggWidget, label=os.path.basename(file), data=file)
         self._kodeTab.setCurrentWidget(loggWidget)
 
 def main():

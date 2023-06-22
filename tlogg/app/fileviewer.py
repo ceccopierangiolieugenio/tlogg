@@ -22,14 +22,11 @@
 
 import TermTk as ttk
 
-from tlogg import FileViewerProxy
-
 from . import TloggCfg
 
 class FileViewer(ttk.TTkAbstractScrollView):
     __slots__ = (
         '_fileBuffer', '_indexesMark', '_indexesSearched', '_selected', '_indexing', '_searchRe',
-        '_fileViewerProxy',
         # Signals
         'selected', 'marked')
     def __init__(self, *args, **kwargs):
@@ -42,7 +39,6 @@ class FileViewer(ttk.TTkAbstractScrollView):
         self.selected = ttk.pyTTkSignal(int)
         self.marked = ttk.pyTTkSignal(list)
         self._fileBuffer = kwargs.get('filebuffer')
-        self._fileViewerProxy = FileViewerProxy(fileName = self._fileBuffer.filename())
         super().__init__(*args, **kwargs)
         self.viewChanged.connect(self._viewChangedHandler)
         self.setFocusPolicy(ttk.TTkK.ClickFocus)
