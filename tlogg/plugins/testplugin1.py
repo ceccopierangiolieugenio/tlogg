@@ -33,4 +33,4 @@ def apply():
 def run():
     ttk.TTkLog.debug("Test Plugin1 Run")
 
-tlogg.TloggPlugin(init=init, apply=apply, run=run)
+tlogg.TloggPlugin(name="Test Plugin 1", init=init, apply=apply, run=run)

@@ -20,8 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import importlib.util
-import importlib.machinery
+import importlib, pkgutil
+import runpy
 import sys, os
 
 import TermTk as ttk
@@ -43,6 +43,15 @@ class TloggHelper():
                 loader = importlib.machinery.SourceFileLoader(fn, filePath)
                 spec = importlib.util.spec_from_loader(loader.name, loader)
                 mod = importlib.util.module_from_spec(spec)
+                loader.exec_module(mod)
+
+        # Check installed plugins
+        for finder, name, ispkg in pkgutil.iter_modules():
+            if name.startswith("tlogg_"):
+                loader = importlib.find_loader(name)
+                spec = importlib.util.find_spec(name)
+                mod = importlib.util.module_from_spec(spec)
+                # runpy.run_module(name)
                 loader.exec_module(mod)
 
         # check the plugin folder

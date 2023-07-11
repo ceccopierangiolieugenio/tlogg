@@ -28,6 +28,7 @@ import TermTk as ttk
 @dataclass
 class TloggPlugin:
     instances = []
+    name   : str
     init   : Callable[[],None] = None
     apply  : Callable[[],None] = None
     run    : Callable[[],None] = None

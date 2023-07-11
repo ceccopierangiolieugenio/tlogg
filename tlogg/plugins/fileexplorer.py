@@ -121,5 +121,6 @@ class FileTree(ttk.TTkWidget):
             self._fileTree.openPath(path)
 
 tlogg.TloggPlugin(
+    name="File Explorer",
     position=ttk.TTkK.LEFT,
     widget=FileTree())
