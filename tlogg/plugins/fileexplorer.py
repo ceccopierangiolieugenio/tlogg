@@ -26,7 +26,7 @@ import TermTk as ttk
 
 import tlogg
 
-class FileTree(ttk.TTkWidget):
+class FileTree(ttk.TTkContainer):
     __slots__ = (
         '_recentPath', '_recentPathId',
         '_controlsLayout',

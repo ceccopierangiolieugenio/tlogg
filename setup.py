@@ -30,9 +30,9 @@ setup(
         "Topic :: Software Development :: User Interfaces"],
     include_package_data=False,
     packages=['tlogg','tlogg.app'],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
-        'pyTermTk>=0.30.0a92',
+        'pyTermTk>=0.33.1a',
         'appdirs',
         'pyyaml'],
     entry_points={
