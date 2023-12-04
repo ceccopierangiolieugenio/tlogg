@@ -45,7 +45,7 @@ def highlightersFormLayout(win):
     frameColors = TTkFrame(border=True, layout=TTkGridLayout())
     leftLayout.addWidget(frameColors,0,0,1,5)
 
-    listColors = TTkList(parent=frameColors)
+    listColors = TTkList(parent=frameColors, dragDropMode=TTkK.DragDropMode.AllowDragDrop)
 
     addButton    = TTkButton(text="+",maxWidth=3)
     removeButton = TTkButton(text="-",maxWidth=3)
@@ -114,7 +114,7 @@ def highlightersFormLayout(win):
     okBtn.clicked.connect(win.close)
     cancelBtn.clicked.connect(win.close)
 
-    @ttk.pyTTkSlot(TTkWidget)
+    @ttk.pyTTkSlot(TTkAbstractListItem)
     def _listCallback(item):
         if color:=item.data():
             # Clear all the signals

@@ -32,7 +32,7 @@ setup(
     packages=['tlogg','tlogg.app'],
     python_requires=">=3.9",
     install_requires=[
-        'pyTermTk>=0.33.1a',
+        'pyTermTk>=0.37.0a',
         'appdirs',
         'pyyaml'],
     entry_points={
