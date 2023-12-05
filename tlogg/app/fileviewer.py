@@ -55,9 +55,8 @@ class FileViewer(ttk.TTkAbstractScrollView):
 
     def _copy(self):
         clipboard = ttk.TTkClipboard()
-        a,b = self._selection
         lines = ttk.TTkString().join([
-            self.getLine(i) for i in range(a,b+1) ])
+            self.getLine(i) for i in range(min(self._selection),max(self._selection)+1) ])
         clipboard.setText(lines)
 
     @ttk.pyTTkSlot(float)
@@ -136,6 +135,7 @@ class FileViewer(ttk.TTkAbstractScrollView):
     @ttk.pyTTkSlot(int)
     def selectAndMove(self, line):
         self._selected = line
+        self._selection = [line,line]
         ox,_ = self.getViewOffsets()
         self.viewMoveTo(ox, max(0,line-self.height()//2))
         self.update()

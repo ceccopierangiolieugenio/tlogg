@@ -35,6 +35,9 @@ setup(
         'pyTermTk>=0.37.0a',
         'appdirs',
         'pyyaml'],
+    extras_require = {
+        'Clipboard Support':  ['pyperclip']
+    },
     entry_points={
         'console_scripts': [
             'tlogg = tlogg:main',

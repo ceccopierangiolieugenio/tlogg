@@ -21,6 +21,11 @@ A fast, advanced [text-based](https://en.wikipedia.org/wiki/Text-based_user_inte
 ```bash
 pip install tlogg
 ```
+## Enable the system Clipboard
+[pyTermTk](https://github.com/ceccopierangiolieugenio/pyTermTk) automatically support the system clipboard through [pyperclip](https://pypi.org/project/pyperclip/)
+```bash
+pip install pyperclip
+```
 # QuickRun
 ```bash
  $ tlogg -h
