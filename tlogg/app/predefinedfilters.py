@@ -22,6 +22,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+__all__ = ['PredefinedFilters','PredefinedFiltersFormWindow']
+
 import copy
 from readline import insert_text
 

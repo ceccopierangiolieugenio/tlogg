@@ -29,7 +29,7 @@ import appdirs
 
 from TermTk import *
 
-from TermTk import TTk, TTkK, TTkLog
+from TermTk import TTk, TTkK, TTkLog, TTkMenuButton
 from TermTk import pyTTkSlot, pyTTkSignal
 from TermTk import TTkFrame
 
@@ -42,6 +42,7 @@ from .loggwidget import LoggWidget
 from .options import optionsFormLayout, optionsLoadTheme
 from .highlighters import highlightersFormLayout
 from .predefinedfilters import PredefinedFiltersFormWindow
+from .notepad import NotePad
 
 
 class TLOGG(TTkGridLayout):
@@ -62,9 +63,10 @@ class TLOGG(TTkGridLayout):
         │ Logger,Debug View                        │
         └──────────────────────────────────────────┘
     '''
-    __slots__ = ('_kodeTab', '_tloggProxy')
+    __slots__ = ('_kodeTab', '_tloggProxy','_notepad')
     def __init__(self, tloggProxy, *args, **kwargs) -> None:
         self._tloggProxy = tloggProxy
+        self._notepad = NotePad()
 
         super().__init__(*args, **kwargs)
 
@@ -86,6 +88,9 @@ class TLOGG(TTkGridLayout):
         fileMenu.addSpacer()
         buttonExit    = fileMenu.addMenu("Exit")
         buttonExit.menuButtonClicked.connect(TTkHelper.quit)
+
+        extraMenu = menuFrame.newMenubarTop().addMenu("E&xtra")
+        extraMenu.addMenu("Scratchpad").menuButtonClicked.connect(self.scratchpad)
 
         helpMenu = menuFrame.newMenubarTop().addMenu("&Help", alignment=TTkK.RIGHT_ALIGN)
         helpMenu.addMenu("About ...").menuButtonClicked.connect(self.showAbout)
@@ -147,8 +152,17 @@ class TLOGG(TTkGridLayout):
             mainSplitter.addWidget(fileTabSplitter)
             mainSplitter.addWidget(TTkLogViewer(),3)
 
+    @pyTTkSlot()
+    def scratchpad(self):
+        win = TTkWindow(
+                title="Mr Scratchpad",
+                size=(80,30),
+                layout=self._notepad,
+                flags=TTkK.WindowFlag.WindowMaximizeButtonHint|TTkK.WindowFlag.WindowCloseButtonHint)
+        TTkHelper.overlay(None, win, 2, 2, toolWindow=True)
 
-    def openFileCallback(self, btn=None):
+    @pyTTkSlot()
+    def openFileCallback(self):
         filePicker = TTkFileDialogPicker(
                         pos = (3,3), size=(90,30),
                         caption="Open a File", path=".",
@@ -156,25 +170,31 @@ class TLOGG(TTkGridLayout):
         filePicker.filePicked.connect(self.openFile)
         TTkHelper.overlay(btn, filePicker, 10, 2, modal=True)
 
-    def showColors(self, btn=None):
+    @pyTTkSlot(TTkMenuButton)
+    def showColors(self, btn):
         win = TTkWindow(title="Highlighters...", size=(70,20), border=True)
         win.setLayout(highlightersFormLayout(win))
         TTkHelper.overlay(btn, win, 10,2, modal=True)
 
-    def showFilters(self, btn=None):
+    @pyTTkSlot(TTkMenuButton)
+    def showFilters(self, btn):
         win = PredefinedFiltersFormWindow(title="Predefined Filters...", size=(70,20), border=True)
         TTkHelper.overlay(btn, win, 10,2, modal=True)
 
-    def showOptions(self, btn=None):
+    @pyTTkSlot(TTkMenuButton)
+    def showOptions(self, btn):
         win = TTkWindow(title="Options...", size=(70,20), border=True)
         win.setLayout(optionsFormLayout(win))
         TTkHelper.overlay(btn, win, 10,2, modal=True)
 
-        # tab.addTab(highlightersForm(), "-Setup-")
-    def showAbout(self, btn=None):
+        # tab.addTab(h
+        #   @pyTTkSlot()ighlightersForm(), "-Setup-")
+    @pyTTkSlot(TTkMenuButton)
+    def showAbout(self, btn):
         TTkHelper.overlay(btn, TTkAbout(), 20,5)
 
-    def showAboutTlogg(self, btn=None):
+    @pyTTkSlot(TTkMenuButton)
+    def showAboutTlogg(self, btn):
         TTkHelper.overlay(btn, About(), 20,5)
 
     def openFile(self, file):

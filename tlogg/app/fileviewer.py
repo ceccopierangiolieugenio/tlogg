@@ -20,13 +20,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+__all__ = ['FileViewer','FileViewerSearch','FileViewerArea']
+
 import TermTk as ttk
 
 from . import TloggCfg
 
 class FileViewer(ttk.TTkAbstractScrollView):
     __slots__ = (
-        '_fileBuffer', '_indexesMark', '_indexesSearched', '_selected', '_indexing', '_searchRe',
+        '_fileBuffer', '_indexesMark', '_indexesSearched',
+        '_selected', '_indexing', '_searchRe',
+        '_selection', '_pressed'
         # Signals
         'selected', 'marked')
     def __init__(self, *args, **kwargs):
@@ -34,6 +38,8 @@ class FileViewer(ttk.TTkAbstractScrollView):
         self._indexesSearched = []
         self._indexing = None
         self._selected = -1
+        self._selection = None
+        self._pressed = False
         self._searchRe = ""
         # Signals
         self.selected = ttk.pyTTkSignal(int)
@@ -46,6 +52,13 @@ class FileViewer(ttk.TTkAbstractScrollView):
     @ttk.pyTTkSlot()
     def _viewChangedHandler(self):
         self.update()
+
+    def _copy(self):
+        clipboard = ttk.TTkClipboard()
+        a,b = self._selection
+        lines = ttk.TTkString().join([
+            self.getLine(i) for i in range(a,b+1) ])
+        clipboard.setText(lines)
 
     @ttk.pyTTkSlot(float)
     def fileIndexing(self, percentage):
@@ -81,7 +94,9 @@ class FileViewer(ttk.TTkAbstractScrollView):
         x,y = evt.x, evt.y
         ox,oy = self.getViewOffsets()
         index = oy+y
-        if oy+y<self._fileBuffer.getLen():
+        self._selection = [index,index]
+        self._pressed = True
+        if 0 <= index < self._fileBuffer.getLen():
             if x<3:
                 if index in self._indexesMark:
                     self._indexesMark.pop(self._indexesMark.index(index))
@@ -93,7 +108,30 @@ class FileViewer(ttk.TTkAbstractScrollView):
                 self.selected.emit(self._selected)
             self.update()
             return True
-        return False
+        return super().mousePressEvent(evt)
+
+    def mouseDragEvent(self, evt) -> bool:
+        if self._pressed and self._selection:
+            w,h = self.size()
+            x,y = evt.x, evt.y
+            lines=self._fileBuffer.getLen()
+            ox,oy = self.getViewOffsets()
+            index = oy+y
+            self._selection[1] = min(max(0,index),lines-1)
+            if y < 0:
+                self.viewMoveTo(ox, max(0,min(oy+min(y,3),lines-h)))
+            elif y >= h:
+                self.viewMoveTo(ox, max(0,min(oy+min(y-h,3),lines-h)))
+            else:
+                self.update()
+        return super().mouseDragEvent(evt)
+
+    def mouseReleaseEvent(self, evt) -> bool:
+        self._pressed = False
+        if self._selection and self._selection[0] != self._selection[1]:
+            self._copy()
+        self.update()
+        return super().mouseReleaseEvent(evt)
 
     @ttk.pyTTkSlot(int)
     def selectAndMove(self, line):
@@ -132,6 +170,10 @@ class FileViewer(ttk.TTkAbstractScrollView):
 
             if i+oy == self._selected:
                 selectedColor = ttk.TTkColor.bg("#008844")
+                searchedColor = ttk.TTkColor.fg("#FFFF00")+ttk.TTkColor.bg("#004400")
+                line = line.setColor(selectedColor)
+            elif self._selection and min(self._selection) <= i+oy <= max(self._selection):
+                selectedColor = ttk.TTkColor.bg("#008888")
                 searchedColor = ttk.TTkColor.fg("#FFFF00")+ttk.TTkColor.bg("#004400")
                 line = line.setColor(selectedColor)
             else:
@@ -216,7 +258,9 @@ class FileViewerSearch(FileViewer):
         x,y = evt.x, evt.y
         ox,oy = self.getViewOffsets()
         index = oy+y
-        if index<len(self._indexes):
+        self._selection = [index,index]
+        self._pressed = True
+        if 0 <= index < len(self._indexes):
             if x<3:
                 index = self._indexes[oy+y]
                 if index in self._indexesMark:

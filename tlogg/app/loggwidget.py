@@ -20,13 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+__all__ = ['LoggWidget']
+
 import TermTk as ttk
 
 from .cfg  import TloggCfg
 from .glbl import TloggGlbl
 from .fileviewer  import FileViewer, FileViewerArea, FileViewerSearch
 from .predefinedfilters import PredefinedFilters
-
 
 class LoggWidget(ttk.TTkSplitter):
     __slots__ = ('_btn_filters', '_bls_label_1', '_bls_cb_icase', '_bls_search', '_bls_searchbox',
