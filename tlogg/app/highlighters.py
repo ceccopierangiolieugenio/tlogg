@@ -131,9 +131,10 @@ def highlightersFormLayout(win):
             bgColor.setColor(TTkColor.bg(color['bg']))
             # Connect the actions
             ## Pattern Line Edit
-            def _setPattern(p):
-                item.text=p
-                color['pattern'] = p
+            @pyTTkSlot(str)
+            def _setPattern(p:TTkString):
+                item.setText(str(p))
+                color['pattern'] = str(p)
             pattern.textEdited.connect(_setPattern)
             ## Case Sensitivity checkbox
             def _setCase(c):color['ignorecase'] = c
