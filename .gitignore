@@ -11,6 +11,7 @@ profiler.txt
 .vscode
 docs/html
 TermTk
+pyperclip
 config
 LOGS
 

@@ -89,6 +89,13 @@ class FileViewer(ttk.TTkAbstractScrollView):
     def viewDisplayedSize(self) -> (int, int):
         return self.size()
 
+    def keyEvent(self, evt):
+        # Enable CTRL+C = Copy
+        if ( evt.type == ttk.TTkK.SpecialKey and
+             evt.mod  == ttk.TTkK.ControlModifier and
+             evt.key  == ttk.TTkK.Key_C ):
+                self._copy()
+
     def mousePressEvent(self, evt):
         x,y = evt.x, evt.y
         ox,oy = self.getViewOffsets()

@@ -226,8 +226,14 @@ def main():
 
     TloggHelper._loadPlugins()
 
-    root = TTk(layout=(tlogg:=TLOGG(tloggProxy=tloggProxy)), title="tlogg")
-
+    root = TTk(
+            title="tlogg",
+            layout=(tlogg:=TLOGG(tloggProxy=tloggProxy)),
+            sigmask=(
+                TTkTerm.Sigmask.CTRL_C |
+                TTkTerm.Sigmask.CTRL_Q |
+                TTkTerm.Sigmask.CTRL_S |
+                TTkTerm.Sigmask.CTRL_Z ))
     TloggHelper._runPlugins()
 
     for file in args.filename:
