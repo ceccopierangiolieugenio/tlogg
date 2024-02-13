@@ -17,6 +17,10 @@ A fast, advanced [text-based](https://en.wikipedia.org/wiki/Text-based_user_inte
 
 [![screenshot](https://raw.githubusercontent.com/ceccopierangiolieugenio/binaryRepo/master/tlogg/demo.001.gif)](https://pypi.org/project/tlogg)
 
+- _Draggable_ **Tiling tabs**
+
+[screenshot](https://github.com/ceccopierangiolieugenio/tlogg/assets/8876552/b3db13d9-48b4-485e-bc19-d655021479b6)
+
 # Install from [pypi](https://pypi.org/project/tlogg)
 ```bash
 pip install tlogg
