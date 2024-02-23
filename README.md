@@ -6,7 +6,7 @@
 [![pypi_version](https://img.shields.io/twitter/follow/Pier95886803?style=social&logo=twitter)](https://twitter.com/hashtag/pyTermTk?src=hashtag_click&f=live)
 
 # tlogg
-A fast, advanced [text-based](https://en.wikipedia.org/wiki/Text-based_user_interface) log explorer inspired by [glogg - the fast, smart log explorer](https://github.com/nickbnf/glogg) and [klogg - Faster log explorer](https://klogg.filimonov.dev)(fork of glogg)
+A fast, advanced [text-based](https://en.wikipedia.org/wiki/Text-based_user_interface) log explorer written in [pyTermTk](https://github.com/ceccopierangiolieugenio/pyTermTk), inspired by [glogg - the fast, smart log explorer](https://github.com/nickbnf/glogg) and [klogg - Faster log explorer](https://klogg.filimonov.dev)(fork of glogg)
 
 [![screenshot](https://raw.githubusercontent.com/ceccopierangiolieugenio/binaryRepo/master/tlogg/screenshot.003.png)](https://pypi.org/project/tlogg)
 ## Features
