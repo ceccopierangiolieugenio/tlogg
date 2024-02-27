@@ -23,7 +23,7 @@
 # SOFTWARE.
 
 import sys
-import random
+import random, json
 
 words = ["Lorem", "ipsum", "dolor", "sit", "amet,", "consectetur", "adipiscing", "elit,", "sed", "do", "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore", "magna", "aliqua.", "Ut", "enim", "ad", "minim", "veniam,", "quis", "nostrud", "exercitation", "ullamco", "laboris", "nisi", "ut", "aliquip", "ex", "ea", "commodo", "consequat.", "Duis", "aute", "irure", "dolor", "in", "reprehenderit", "in", "voluptate", "velit", "esse", "cillum", "dolore", "eu", "fugiat", "nulla", "pariatur.", "Excepteur", "sint", "occaecat", "cupidatat", "non", "proident,", "sunt", "in", "culpa", "qui", "officia", "deserunt", "mollit", "anim", "id", "est", "laborum."]
 def getWord():
@@ -46,8 +46,25 @@ with open(filename, 'a') as out:
 		seconds = 1000 + i
 		m, s = divmod(seconds, 60)
 		h, m = divmod(m, 60)
-		if (random.random() < 0.9):
+		if ((rnd:=random.random()) < 0.6):
 			out.write( "TEST;%d:%02d:%02d;COL1\tCOL2     COL3  c:COL4;LIN=%05X\tRND=%f %s %s\n" % (h, m, s, i, random.random(), getSentence(3,20), " Fill" * random.randint(1,5)) )
+		elif (rnd < 0.9):
+			jsonLine = {
+				'time':f"{h:02d}:{m:02d}:{s:02d}",
+				'line':i,
+				'data':{
+					'rnd':random.random(),
+					'sentence1':getSentence(3,6),
+					'sentence2':getSentence(3,6),
+					'sentence3':getSentence(3,6),
+					'sentence4':getSentence(3,6)},
+				'extra': {
+					'text':getSentence(3,10),
+					'list':[getSentence(1,2) for _ in range(random.randint(2,7))],
+					'list2':[random.randint(2,128) for _ in range(random.randint(2,7))],
+					'fill':" Fill" * random.randint(1,5)
+					} }
+			out.write( json.dumps(jsonLine) + '\n')
 		else:
 			out.write( "TEST;%d:%02d:%02d;COL1 --- (BROKEN LINE) --- LIN=%05X\tRND=%f %s %s\n" % (h, m, s, i, random.random(), getSentence(3,20), " Fill" * random.randint(1,5)) )
 	out.write( "    END LINE (No Newline)" )

@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+__all__ = ['TloggViewerProxy', 'tloggProxy']
+
 import TermTk as ttk
 
 class TloggViewerProxy():
@@ -33,10 +35,11 @@ class TloggViewerProxy():
 class TloggProxy():
     __slots__ = ('_openFileCb',
                  # Signals
-                 'tloggFocussed')
+                 'tloggFocussed', 'lineSelected')
     def __init__(self) -> None:
         self._openFileCb = lambda _ : None
         self.tloggFocussed = ttk.pyTTkSignal(TloggViewerProxy, str)
+        self.lineSelected = ttk.pyTTkSignal(str)
 
     def setOpenFile(self, cb):
         self._openFileCb = cb

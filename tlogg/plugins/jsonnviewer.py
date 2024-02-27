@@ -20,22 +20,37 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from dataclasses import dataclass
-from typing import Callable
+import json
+
+from pygments import highlight
+from pygments.lexers import PythonLexer, JavascriptLexer
+from pygments.formatters import TerminalFormatter, Terminal256Formatter, TerminalTrueColorFormatter
 
 import TermTk as ttk
 
-@dataclass
-class TloggPlugin:
-    instances = []
-    name   : str
-    init   : Callable[[],None] = None
-    apply  : Callable[[],None] = None
-    run    : Callable[[],None] = None
-    position : int = ttk.TTkK.NONE    # Accepted Values are ; NONE, LEFT, RIGHT
-    widget : ttk.TTkWidget     = None # Required if a position is defined
-    menu   : bool = False
-    visible: bool = False
+import tlogg
 
-    def __post_init__(self):
-        TloggPlugin.instances.append(self)
+class JsonViewer(ttk.TTkTextEdit):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setLineWrapMode(ttk.TTkK.WidgetWidth)
+        self.setWordWrapMode(ttk.TTkK.WordWrap)
+        tlogg.tloggProxy.lineSelected.connect(self._showLine)
+
+    ttk.pyTTkSlot(str)
+    def _showLine(self, text):
+        try:
+            text = json.loads(text)
+            text = json.dumps(text, indent=4)
+            text = highlight(text, JavascriptLexer(), TerminalTrueColorFormatter(style='material'))
+
+        except ValueError as e:
+            pass
+        self.setText(text)
+
+tlogg.TloggPlugin(
+    name="Json Viewer",
+    position=ttk.TTkK.RIGHT,
+    menu=True,
+    visible=False,
+    widget=JsonViewer(lineNumber=True, readOnly=False, ))

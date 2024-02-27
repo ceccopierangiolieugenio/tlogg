@@ -12,6 +12,8 @@ profiler.txt
 docs/html
 TermTk
 pyperclip
+pygments
+searches.yaml
 config
 LOGS
 

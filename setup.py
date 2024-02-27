@@ -32,8 +32,9 @@ setup(
     packages=['tlogg','tlogg.app'],
     python_requires=">=3.9",
     install_requires=[
-        'pyTermTk>=0.37.0a',
+        'pyTermTk>=0.39.0a6',
         'appdirs',
+        'pygments',
         'pyyaml'],
     extras_require = {
         'Clipboard Support':  ['pyperclip']

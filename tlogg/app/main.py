@@ -86,6 +86,7 @@ class TLOGG(TTkGridLayout):
 
         extraMenu = appMenuBar.addMenu("E&xtra")
         extraMenu.addMenu("Scratchpad").menuButtonClicked.connect(self.scratchpad)
+        extraMenu.addSpacer()
 
         helpMenu = appMenuBar.addMenu("&Help", alignment=TTkK.RIGHT_ALIGN)
         helpMenu.addMenu("About ...").menuButtonClicked.connect(self.showAbout)
@@ -106,6 +107,11 @@ class TLOGG(TTkGridLayout):
         for mod in TloggHelper._getPlugins():
             if mod.position:
                 appTemplate.setWidget(mod.widget, mod.position, 30)
+                if mod.menu:
+                    _menu = extraMenu.addMenu(mod.name, checkable=True, checked=mod.visible)
+                    mod.widget.setVisible(mod.visible)
+                    _menu.toggled.connect(mod.widget.setVisible)
+
 
         appTemplate.setWidget(self._kodeTab, TTkAppTemplate.MAIN)
         appTemplate.setWidget(TTkLogViewer(),TTkAppTemplate.BOTTOM,size=1,title="Logs")

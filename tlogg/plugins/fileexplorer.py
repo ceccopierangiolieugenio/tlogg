@@ -123,4 +123,5 @@ class FileTree(ttk.TTkContainer):
 tlogg.TloggPlugin(
     name="File Explorer",
     position=ttk.TTkK.LEFT,
+    visible=True,
     widget=FileTree())

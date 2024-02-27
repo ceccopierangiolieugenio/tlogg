@@ -24,6 +24,8 @@ __all__ = ['FileViewer','FileViewerSearch','FileViewerArea']
 
 import TermTk as ttk
 
+from tlogg import TloggHelper, tloggProxy
+
 from . import TloggCfg
 
 class FileViewer(ttk.TTkAbstractScrollView):
@@ -112,6 +114,7 @@ class FileViewer(ttk.TTkAbstractScrollView):
             else:
                 self._selected = index
                 self.selected.emit(self._selected)
+                tloggProxy.lineSelected.emit(self.getLine(self._selected))
             self.update()
             return True
         return super().mousePressEvent(evt)
@@ -279,6 +282,7 @@ class FileViewerSearch(FileViewer):
             else:
                 self._selected = index
                 self.selected.emit(self._indexes[self._selected])
+                tloggProxy.lineSelected.emit(self.getLine(self._selected))
             self.update()
             return True
         return False
