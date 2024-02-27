@@ -66,6 +66,10 @@ class TloggHelper():
                 mod.apply()
 
     @staticmethod
+    def _getPlugins():
+        return TloggPlugin.instances
+
+    @staticmethod
     def _getPluginPlacements():
         ret = ttk.TTkK.NONE
         for mod in TloggPlugin.instances:

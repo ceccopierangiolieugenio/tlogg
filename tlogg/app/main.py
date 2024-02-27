@@ -29,10 +29,6 @@ import appdirs
 
 from TermTk import *
 
-from TermTk import TTk, TTkK, TTkLog, TTkMenuButton
-from TermTk import pyTTkSlot, pyTTkSignal
-from TermTk import TTkFrame
-
 from tlogg import TloggHelper, tloggProxy
 
 from .cfg  import *
@@ -72,27 +68,26 @@ class TLOGG(TTkGridLayout):
 
         self._tloggProxy.setOpenFile(self.openFile)
 
-        self.addWidget(mainSplitter := TTkSplitter(orientation=TTkK.VERTICAL))
-
-        menuFrame = TTkFrame(border=False, maxHeight=1)
+        self.addWidget(appTemplate:=TTkAppTemplate(border=False))
 
         self._kodeTab      = TTkKodeTab(border=False, closable=True)
 
-        fileMenu = menuFrame.newMenubarTop().addMenu("&File")
-        buttonOpen    = fileMenu.addMenu("Open")
-        buttonClose   = fileMenu.addMenu("Close")
+        appTemplate.setMenuBar(appMenuBar:=TTkMenuBarLayout(), TTkAppTemplate.LEFT)
+        fileMenu      = appMenuBar.addMenu("&File")
+        buttonOpen    = fileMenu.addMenu("&Open")
+        buttonClose   = fileMenu.addMenu("&Close")
         fileMenu.addSpacer()
-        buttonColors  = fileMenu.addMenu("&Colors...")
+        buttonColors  = fileMenu.addMenu("C&olors...")
         buttonFilters = fileMenu.addMenu("&Filters...")
-        buttonOptions = fileMenu.addMenu("&Options...")
+        buttonOptions = fileMenu.addMenu("O&ptions...")
         fileMenu.addSpacer()
-        buttonExit    = fileMenu.addMenu("Exit")
+        buttonExit    = fileMenu.addMenu("E&xit")
         buttonExit.menuButtonClicked.connect(TTkHelper.quit)
 
-        extraMenu = menuFrame.newMenubarTop().addMenu("E&xtra")
+        extraMenu = appMenuBar.addMenu("E&xtra")
         extraMenu.addMenu("Scratchpad").menuButtonClicked.connect(self.scratchpad)
 
-        helpMenu = menuFrame.newMenubarTop().addMenu("&Help", alignment=TTkK.RIGHT_ALIGN)
+        helpMenu = appMenuBar.addMenu("&Help", alignment=TTkK.RIGHT_ALIGN)
         helpMenu.addMenu("About ...").menuButtonClicked.connect(self.showAbout)
         helpMenu.addMenu("About tlogg").menuButtonClicked.connect(self.showAboutTlogg)
 
@@ -108,49 +103,12 @@ class TLOGG(TTkGridLayout):
         buttonFilters.menuButtonClicked.connect(self.showFilters)
         buttonOptions.menuButtonClicked.connect(self.showOptions )
 
-        # Defining the layout based on the plugin widget placement
-        if (placement:=TloggHelper._getPluginPlacements()) == ttk.TTkK.NONE:
-            # If no plugin require a specific placement
-            # define a basic layout without side panels
-            fileControlLayout = TTkVBoxLayout()
-            fileControlLayout.addWidget(menuFrame)
-            fileControlLayout.addWidget(self._kodeTab)
+        for mod in TloggHelper._getPlugins():
+            if mod.position:
+                appTemplate.setWidget(mod.widget, mod.position, 30)
 
-            mainSplitter.addWidget(fileControlLayout)
-            mainSplitter.addWidget(TTkLogViewer(),3)
-        else:
-            fileTabSplitter = TTkSplitter(orientation=TTkK.HORIZONTAL)
-            fileTabSplitterSizes = []
-            fileControlLayout = TTkVBoxLayout()
-            fileControlLayout.addWidget(menuFrame)
-
-            # Add left placed plugin first in the splitter
-            for mod in TloggHelper._getPlacedPlugins(ttk.TTkK.LEFT):
-                if fileControlLayout:
-                    fileControlLayout.addWidget(mod.widget)
-                    fileTabSplitter.addItem(fileControlLayout)
-                    fileControlLayout = None
-                else:
-                    fileTabSplitter.addWidget(mod.widget)
-                fileTabSplitterSizes.append(40)
-
-            fileTabSplitter.addWidget(self._kodeTab)
-            fileTabSplitterSizes.append(None)
-
-            # Add left placed plugins at the end in the splitter
-            for mod in TloggHelper._getPlacedPlugins(ttk.TTkK.RIGHT):
-                if fileControlLayout:
-                    fileControlLayout.addWidget(mod.widget)
-                    fileTabSplitter.addItem(fileControlLayout)
-                    fileControlLayout = None
-                else:
-                    fileTabSplitter.addWidget(mod.widget)
-                fileTabSplitterSizes.append(50)
-
-            fileTabSplitter.setSizes(fileTabSplitterSizes)
-
-            mainSplitter.addWidget(fileTabSplitter)
-            mainSplitter.addWidget(TTkLogViewer(),3)
+        appTemplate.setWidget(self._kodeTab, TTkAppTemplate.MAIN)
+        appTemplate.setWidget(TTkLogViewer(),TTkAppTemplate.BOTTOM,size=1,title="Logs")
 
     @pyTTkSlot()
     def scratchpad(self):
@@ -161,8 +119,8 @@ class TLOGG(TTkGridLayout):
                 flags=TTkK.WindowFlag.WindowMaximizeButtonHint|TTkK.WindowFlag.WindowCloseButtonHint)
         TTkHelper.overlay(None, win, 2, 2, toolWindow=True)
 
-    @pyTTkSlot()
-    def openFileCallback(self):
+    @pyTTkSlot(TTkMenuButton)
+    def openFileCallback(self, btn):
         filePicker = TTkFileDialogPicker(
                         pos = (3,3), size=(90,30),
                         caption="Open a File", path=".",
