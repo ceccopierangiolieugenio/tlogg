@@ -1,3 +1,7 @@
+# [DEPRECATED] [tlogg](https://github.com/ceccopierangiolieugenio/pyTermTk/tree/main/apps/tlogg) moved to the [pyTermTk](https://github.com/ceccopierangiolieugenio/pyTermTk)'s [monorepo](https://github.com/ceccopierangiolieugenio/pyTermTk/tree/main/apps) - please use https://github.com/ceccopierangiolieugenio/pyTermTk/tree/main/apps/tlogg
+
+-----
+
 ![Linux](https://img.shields.io/badge/-Linux-grey?logo=linux)
 ![Usage](https://img.shields.io/badge/Usage-Terminal%20User%20Interface-yellow)
 ![Python](https://img.shields.io/badge/Python-v3.8%5E-green?logo=python)
